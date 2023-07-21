@@ -4,24 +4,25 @@
       <form action="">
         <div>
           <label for="">Имя</label>
-          <input type="text" />
+          <input v-model="name" type="text" />
         </div>
         <div>
           <label for="">Фамилия</label>
-          <input type="text" />
+          <input v-model="surname" type="text" />
         </div>
         <div>
           <label for="">Почта</label>
-          <input type="text" />
+          <input v-model="email" type="email" />
         </div>
         <div>
           <label for="">Пароль</label>
-          <input type="text" />
+          <input v-model="password" type="password" />
         </div>
         <div>
           <label for="">Повторите пароль</label>
-          <input type="text" />
+          <input v-model="password_repeat" type="password" />
         </div>
+        <button @click.prevent="Register()">Зарегистрироваться</button>
       </form>
     </div>
     <div class="logo">
@@ -133,7 +134,16 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      name: "",
+      surname: "",
+      email: "",
+      password: "",
+      password_repeat: "",
+    };
+  },
+  methods: {
+    Register() {},
   },
 };
 </script>
@@ -160,6 +170,19 @@ export default {
           height: 30px;
           width: 100%;
         }
+      }
+      button {
+        background: transparent;
+        border: 2px solid #af3131;
+        border-radius: 7px;
+        padding: 10px 20px;
+        transition: 0.5s;
+      }
+      button:hover {
+        cursor: pointer;
+        background: #af3131;
+        color: #000;
+        font-weight: bolder;
       }
     }
   }
