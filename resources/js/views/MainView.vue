@@ -142,8 +142,26 @@ export default {
       password_repeat: "",
     };
   },
+  updated() {
+    if (localStorage.getItem("token")) {
+      this.$router.push("/profile");
+    }
+  },
   methods: {
-    Register() {},
+    Register() {
+      axios
+        .post("/api/register", {
+          name: this.name,
+          surname: this.surname,
+          email: this.email,
+          password: this.password,
+          password_repeat: this.password_repeat,
+        })
+        .then((res) => {
+          localStorage.setItem("token", res.data["content"]);
+          this.$router.push("/profile");
+        });
+    },
   },
 };
 </script>
