@@ -106,7 +106,11 @@
               </g>
             </svg>
           </li>
-          <li>Войдите в аккаунт</li>
+          <li v-if="!token">Войдите в аккаунт</li>
+          <li class="ava" :data-count="me.name" v-if="token">
+            <img :src="me.avatar" alt="" />
+          </li>
+          <!-- <li v-if="token"><img :src="me.avatar" alt="" /></li> -->
         </ul>
       </nav>
     </header>
@@ -116,7 +120,36 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      me: [],
+      token: null,
+    };
+  },
+  mounted() {
+    this.getMe();
+  },
+  watch: {
+    $route() {
+      this.getToken();
+      this.getMe();
+    },
+  },
+  methods: {
+    getToken() {
+      this.token = localStorage.getItem("token");
+    },
+    getMe() {
+      axios
+        .get("/api/me", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          this.me = res.data.content;
+        })
+        .catch((err) => {
+          this.$router.push("/");
+        });
+    },
   },
 };
 </script>
@@ -136,6 +169,19 @@ div {
           svg {
             fill: white;
           }
+          img {
+            width: 50px;
+            border-radius: 50%;
+          }
+        }
+        .ava {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 20px;
+        }
+        .ava::before {
+          content: attr(data-count);
         }
       }
     }

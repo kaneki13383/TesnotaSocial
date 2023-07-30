@@ -29,6 +29,20 @@ class Autorization extends Controller
             'content' => $token->plainTextToken,
         ], 200);
     }
+    public function login(Request $request)
+    {
+        if (!Auth::attempt($request->all())) {
+            return response()->json([
+                'message' => 'Неверные данные',
+            ], 401);
+        }
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Вы успешно вошли',
+            'content' => $token,
+        ], 200);
+    }
     public function me()
     {
         return response()->json([

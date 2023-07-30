@@ -1,15 +1,15 @@
 <template>
-  <div>Profile</div>
-  <p>Имя: {{ me.name }}</p>
-  <a @click="logout()">Выход</a>
+  <div class="container">
+    <div>Profile</div>
+    <!-- <p>Имя: {{ me.name }}</p> -->
+    <a @click="logout()">Выход</a>
+  </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-      me: {},
-    };
+    return {};
   },
   mounted() {
     this.getMe();

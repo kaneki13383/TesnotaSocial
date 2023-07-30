@@ -24,6 +24,18 @@
         </div>
         <button @click.prevent="Register()">Зарегистрироваться</button>
       </form>
+
+      <form action="">
+        <div>
+          <label for="">Почта</label>
+          <input v-model="email" type="email" />
+        </div>
+        <div>
+          <label for="">Пароль</label>
+          <input v-model="password" type="password" />
+        </div>
+        <button @click.prevent="Login()">Войти</button>
+      </form>
     </div>
     <div class="logo">
       <svg
@@ -156,6 +168,17 @@ export default {
           email: this.email,
           password: this.password,
           password_repeat: this.password_repeat,
+        })
+        .then((res) => {
+          localStorage.setItem("token", res.data["content"]);
+          this.$router.push("/profile");
+        });
+    },
+    Login() {
+      axios
+        .post("/api/login", {
+          email: this.email,
+          password: this.password,
         })
         .then((res) => {
           localStorage.setItem("token", res.data["content"]);
