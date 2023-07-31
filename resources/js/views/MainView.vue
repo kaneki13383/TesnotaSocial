@@ -2,6 +2,7 @@
   <div class="register container">
     <div>
       <form action="">
+        <h2>Регистрация</h2>
         <div>
           <label for="">Имя</label>
           <input v-model="name" type="text" />
@@ -25,7 +26,8 @@
         <button @click.prevent="Register()">Зарегистрироваться</button>
       </form>
 
-      <form action="">
+      <form style="margin-top: 100px" action="">
+        <h2>Авторизация</h2>
         <div>
           <label for="">Почта</label>
           <input v-model="email" type="email" />
@@ -161,18 +163,20 @@ export default {
   },
   methods: {
     Register() {
-      axios
-        .post("/api/register", {
-          name: this.name,
-          surname: this.surname,
-          email: this.email,
-          password: this.password,
-          password_repeat: this.password_repeat,
-        })
-        .then((res) => {
-          localStorage.setItem("token", res.data["content"]);
-          this.$router.push("/profile");
-        });
+      if (this.password == this.password_repeat) {
+        axios
+          .post("/api/register", {
+            name: this.name,
+            surname: this.surname,
+            email: this.email,
+            password: this.password,
+            password_repeat: this.password_repeat,
+          })
+          .then((res) => {
+            localStorage.setItem("token", res.data["content"]);
+            this.$router.push("/profile");
+          });
+      }
     },
     Login() {
       axios

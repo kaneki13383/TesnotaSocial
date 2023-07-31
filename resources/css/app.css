@@ -18,6 +18,12 @@ body{
     padding: 0 15px;
     margin: 0 auto;
 }
+.block{    
+  margin-top: 20px;
+  background: #272727;
+  border-radius: 10px;
+  padding: 30px;
+}
 @media screen and (max-width: 1630px) {
     .container{
         max-width: 1024px;

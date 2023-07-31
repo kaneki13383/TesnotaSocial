@@ -22,4 +22,5 @@ Route::post('/login', [Autorization::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [Autorization::class, 'me']);
     Route::get('/logout', [Autorization::class, 'logout']);
+    Route::post('/change/avatar', [Autorization::class, 'changeAvatar']);
 });

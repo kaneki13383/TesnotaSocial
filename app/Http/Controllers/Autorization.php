@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class Autorization extends Controller
 {
@@ -52,10 +53,25 @@ class Autorization extends Controller
     }
     public function logout(): \Illuminate\Http\JsonResponse
     {
-        //Удаление токенов
         auth('sanctum')->user()->tokens()->delete();
         return response()->json([
             'message' => 'Вы вышли'
         ], 200);
+    }
+    public function changeAvatar(Request $request)
+    {
+        $data = $request->validate([
+            'avatar' => ['required', 'file'],
+        ]);
+        $user = User::find(Auth::guard('sanctum')->id());
+        $path = Storage::disk('public')->put('avatars', $data['avatar']);
+        // dd($user->id);
+        User::where('id', $user->id)->update([
+            'avatar' => 'storage/' . $path
+        ]);
+        return response()->json([
+            'message' => 'Поле avatar обновлен',
+            'content' => $path,
+        ]);
     }
 }
