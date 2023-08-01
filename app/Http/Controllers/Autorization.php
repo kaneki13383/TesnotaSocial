@@ -74,4 +74,16 @@ class Autorization extends Controller
             'content' => $path,
         ]);
     }
+    public function editProfile(Request $request)
+    {
+        $user = User::find(Auth::guard('sanctum')->id());
+        User::where('id', $user->id)->update([
+            'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'email' => $request->input('email'),
+        ]);
+        return response()->json([
+            'message' => 'Данные успешно изменены'
+        ]);
+    }
 }

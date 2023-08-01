@@ -227,7 +227,6 @@ export default {
         cursor: pointer;
         background: #af3131;
         color: #000;
-        font-weight: bolder;
       }
     }
   }
