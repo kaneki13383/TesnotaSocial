@@ -14,4 +14,8 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'id');
     }
+    public function photo_post()
+    {
+        return $this->belongsTo(PhotoPost::class, 'id');
+    }
 }

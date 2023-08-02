@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PhotoPost;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class AllPostsResource extends JsonResource
             'id' => $this->id,
             'id_user' => User::find($this->id_user),
             'text' => $this->text,
+            'photos' => PhotoPost::where('id_post', $this->id)->get(),
             'created_at' => $this->created_at
         ];
     }

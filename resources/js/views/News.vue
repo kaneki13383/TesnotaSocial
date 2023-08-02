@@ -124,11 +124,30 @@
         />
         <div
           v-if="create_post == true"
-          style="display: flex; flex-direction: row; gap: 10px"
+          style="display: flex; flex-direction: column; gap: 10px"
         >
-          <input type="file" />
+          <input
+            multiple
+            type="file"
+            id="file"
+            ref="file"
+            required
+            v-on:change="handleFileUpload()"
+          />
+          <button @click="addFiles()">Выбрать фото</button>
           <button @click.prevent="createPost()">Опубликовать</button>
+
+          <div class="preview_photo">
+            <div v-for="(photo, index) in url" :key="photo" id="preview">
+              <img
+                @click="url.splice(index, 1), removeFile(index)"
+                v-if="url"
+                :src="photo"
+              />
+            </div>
+          </div>
         </div>
+
         <div v-if="message != ''" @click="message = ''" class="message">
           <p>{{ message }}</p>
         </div>
@@ -148,7 +167,17 @@
           <p>
             {{ post.text }}
           </p>
-          <img src="/img/no_avatar.jpg" alt="" />
+
+          <Carousel>
+            <Slide v-for="slide in post.photos" :key="slide">
+              <img :src="slide.photo" alt="" />
+            </Slide>
+
+            <template #addons>
+              <Navigation />
+              <Pagination />
+            </template>
+          </Carousel>
         </div>
         <div class="footer_post">
           <div>
@@ -207,7 +236,21 @@
 <script>
 import moment from "moment/min/moment-with-locales";
 moment.locale("ru");
+
+import "vue3-carousel/dist/carousel.css";
+import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
+import CarouselFixComponentVue from "../components/CarouselFixComponent.vue";
+import PreviewPhotoVue from "../components/PreviewPhoto.vue";
+
 export default {
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation,
+    CarouselFixComponentVue,
+    PreviewPhotoVue,
+  },
   data() {
     return {
       create_post: false,
@@ -215,6 +258,8 @@ export default {
       message: "",
       error: "",
       posts: [],
+      files: [],
+      url: [],
     };
   },
   mounted() {
@@ -222,6 +267,24 @@ export default {
     this.allPosts();
   },
   methods: {
+    removeFile(key) {
+      this.files.splice(key, 1);
+    },
+    addFiles() {
+      this.$refs.file.click();
+    },
+    handleFileUpload() {
+      let uploadedFiles = this.$refs.file.files;
+
+      for (var i = 0; i < uploadedFiles.length; i++) {
+        this.files.push(uploadedFiles[i]);
+      }
+      const preview = this.$refs.file.files;
+      for (let index = 0; index < preview.length; index++) {
+        this.url.push(URL.createObjectURL(preview[index]));
+      }
+      console.log(this.file, this.url);
+    },
     getHumanDate: function (date) {
       return moment(date).fromNow();
     },
@@ -239,6 +302,9 @@ export default {
     createPost() {
       let fd = new FormData();
       fd.set("text", this.text);
+      for (let index = 0; index < this.files.length; index++) {
+        fd.append("file[]", this.files[index]);
+      }
       axios
         .post("/api/post/create", fd, {
           headers: {
@@ -249,6 +315,8 @@ export default {
           this.text = "";
           this.message = res.data.message;
           this.create_post = false;
+          this.files = [];
+          this.url = [];
           this.allPosts();
         })
         .catch((err) => {
@@ -260,6 +328,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.preview_photo {
+  display: flex;
+  flex-wrap: wrap;
+  #preview img {
+    max-width: 400px;
+    max-height: 300px;
+  }
+}
+
 .all_menu {
   display: flex;
   flex-direction: row;
@@ -317,6 +394,11 @@ export default {
         border-radius: 10px;
         padding-left: 5px;
       }
+      input[type="file"] {
+        width: auto;
+        position: absolute;
+        top: -500px;
+      }
       div {
         button {
           cursor: pointer;
@@ -361,6 +443,7 @@ export default {
     margin-top: 20px;
     img {
       margin-top: 20px;
+      max-width: 100%;
     }
   }
   .footer_post {
