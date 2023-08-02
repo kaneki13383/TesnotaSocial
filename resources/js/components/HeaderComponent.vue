@@ -212,8 +212,8 @@
           </li>
           <li v-if="!token">Войдите в аккаунт</li>
           <router-link v-if="token" to="/profile"
-            ><li class="ava" :data-count="this.$store.state.user.name">
-              <img :src="this.$store.state.user.avatar" alt="" /></li
+            ><li class="ava" :data-count="me.name">
+              <img :src="me.avatar" alt="" /></li
           ></router-link>
         </ul>
       </nav>
@@ -278,6 +278,7 @@ div {
           }
           img {
             width: 50px;
+            height: 50px;
             border-radius: 50%;
           }
         }

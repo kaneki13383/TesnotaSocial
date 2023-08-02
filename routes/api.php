@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Autorization;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +21,13 @@ Route::post('/login', [Autorization::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    //Все что связано с пользователем
     Route::get('/me', [Autorization::class, 'me']);
     Route::get('/logout', [Autorization::class, 'logout']);
     Route::post('/change/avatar', [Autorization::class, 'changeAvatar']);
     Route::post('/change/profile', [Autorization::class, 'editProfile']);
+
+    // Все что связано с постами
+    Route::get('/post/all', [PostController::class, 'getAllPosts']);
+    Route::post('/post/create', [PostController::class, 'createPost']);
 });
