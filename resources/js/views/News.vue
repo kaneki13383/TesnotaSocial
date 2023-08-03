@@ -160,9 +160,31 @@
 
       <div v-for="(post, index) in posts" :key="post" class="block post">
         <div class="header_post">
-          <img :src="post.id_user.avatar" alt="" />
+          <router-link
+            v-if="this.$store.state.user.id != post.id_user.id"
+            :to="{ path: '/user/' + post.id_user.id }"
+            ><img :src="post.id_user.avatar" alt=""
+          /></router-link>
+          <router-link
+            v-if="this.$store.state.user.id == post.id_user.id"
+            :to="{ path: '/profile' }"
+            ><img :src="post.id_user.avatar" alt=""
+          /></router-link>
           <div>
-            <p>{{ post.id_user.name }} {{ post.id_user.surname }}</p>
+            <router-link
+              v-if="this.$store.state.user.id != post.id_user.id"
+              :to="{ path: '/user/' + post.id_user.id }"
+              ><p>
+                {{ post.id_user.name }} {{ post.id_user.surname }}
+              </p></router-link
+            >
+            <router-link
+              v-if="this.$store.state.user.id == post.id_user.id"
+              :to="{ path: '/profile' }"
+              ><p>
+                {{ post.id_user.name }} {{ post.id_user.surname }}
+              </p></router-link
+            >
             <p>{{ getHumanDate(post.created_at) }}</p>
           </div>
         </div>
@@ -171,7 +193,7 @@
             {{ post.text }}
           </p>
 
-          <Carousel>
+          <Carousel v-if="post.photos.length != 1">
             <Slide v-for="slide in post.photos" :key="slide">
               <img :src="slide.photo" alt="" />
             </Slide>
@@ -181,6 +203,7 @@
               <Pagination />
             </template>
           </Carousel>
+          <img v-else :src="post.photos[0].photo" alt="" />
         </div>
         <div class="footer_post">
           <div @click="addLike(post.id, index)">
@@ -397,26 +420,6 @@ export default {
           this.posts[index].active_like = res.data.check;
         });
     },
-    // checkLike(idPost) {
-    //   axios
-    //     .post(
-    //       "/api/likes/check",
-    //       {
-    //         id_post: idPost,
-    //       },
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       // this.active_like = res.data.check;
-    //       let check = res.data.check;
-    //       return check;
-    //     })
-    //     .catch((err) => {});
-    // },
   },
 };
 </script>
@@ -534,8 +537,11 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      p:nth-child(1) {
-        font-size: 15px;
+      a {
+        text-decoration: none;
+        p:nth-child(1) {
+          font-size: 15px;
+        }
       }
       p:nth-child(2) {
         color: #606060;

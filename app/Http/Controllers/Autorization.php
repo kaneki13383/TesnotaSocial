@@ -67,7 +67,7 @@ class Autorization extends Controller
         $path = Storage::disk('public')->put('avatars', $data['avatar']);
         // dd($user->id);
         User::where('id', $user->id)->update([
-            'avatar' => 'storage/' . $path
+            'avatar' => '/storage/' . $path
         ]);
         return response()->json([
             'message' => 'Поле avatar обновлен',
@@ -85,5 +85,9 @@ class Autorization extends Controller
         return response()->json([
             'message' => 'Данные успешно изменены'
         ]);
+    }
+    public function findUser($id)
+    {
+        return User::find($id);
     }
 }

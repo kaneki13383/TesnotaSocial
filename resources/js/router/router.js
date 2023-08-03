@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainView from '../views/MainView.vue';
 import Profile from '../views/Profile.vue';
 import News from '../views/News.vue';
+import CheckProfileUser from '../views/CheckProfileUser.vue';
 
 const router = new createRouter({
     base: "/",
@@ -10,6 +11,7 @@ const router = new createRouter({
         { path: "/", component: MainView },
         { path: "/profile", component: Profile },
         { path: "/news", component: News },
+        { path: "/user/:id", component: CheckProfileUser },
     ],
 });
 

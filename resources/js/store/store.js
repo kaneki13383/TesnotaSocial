@@ -3,6 +3,7 @@ export default createStore({
     state() {
         return {
             user: {
+                id: 0,
                 name: '',
                 surname: '',
                 email: '',

@@ -249,6 +249,7 @@ export default {
         })
         .then((res) => {
           this.me = res.data.content;
+          this.$store.state.user.id = this.me.id;
         })
         .catch((err) => {
           this.$router.push("/");

@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', [Autorization::class, 'logout']);
     Route::post('/change/avatar', [Autorization::class, 'changeAvatar']);
     Route::post('/change/profile', [Autorization::class, 'editProfile']);
+    Route::get('/user/{id}', [Autorization::class, 'findUser']);
 
     // Все что связано с постами
     Route::get('/post/all', [PostController::class, 'getAllPosts']);
