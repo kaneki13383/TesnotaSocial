@@ -190,6 +190,37 @@
               height="40"
               viewBox="0 0 34 40"
               fill="none"
+              v-if="post.active_like == true"
+            >
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <path
+                d="M23.0625 6.25C20.8583 6.25 18.7989 7.35125 17.3333 9.2575C15.8677 7.35125 13.8083 6.25 11.6042 6.25C7.29582 6.25 3.79166 10.4163 3.79166 15.625C3.79166 26.9275 17.3333 33.75 17.3333 33.75C17.3333 33.75 30.875 26.9275 30.875 15.625C30.875 10.4163 27.3708 6.25 23.0625 6.25ZM17.3333 30.9963C14.6021 29.4013 5.87499 23.6725 5.87499 15.625C5.87499 11.8337 8.44478 8.75 11.6042 8.75C13.2187 8.75 14.7104 9.5325 15.8021 10.9525L16.5677 11.9488H18.0989L18.8646 10.9525C19.9562 9.5325 21.4479 8.75 23.0625 8.75C26.2219 8.75 28.7917 11.8337 28.7917 15.625C28.7917 23.6725 20.0646 29.4013 17.3333 30.9963Z"
+                fill="#AF3131"
+              />
+              <ellipse
+                cx="11.9166"
+                cy="16.5"
+                rx="7.08333"
+                ry="8.5"
+                fill="#AF3131"
+              />
+              <ellipse
+                cx="17.3333"
+                cy="24.5"
+                rx="8.33333"
+                ry="6.5"
+                fill="#AF3131"
+              />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="34"
+              height="40"
+              viewBox="0 0 34 40"
+              fill="none"
+              v-else
             >
               <path
                 d="M11.6042 10V12.5C10.1687 12.5 8.99999 13.9013 8.99999 15.625H6.91666C6.91666 12.5238 9.01978 10 11.6042 10Z"
@@ -261,6 +292,7 @@ export default {
       posts: [],
       files: [],
       url: [],
+      active_like: [],
     };
   },
   mounted() {
@@ -284,7 +316,6 @@ export default {
       for (let index = 0; index < preview.length; index++) {
         this.url.push(URL.createObjectURL(preview[index]));
       }
-      console.log(this.file, this.url);
     },
     getHumanDate: function (date) {
       return moment(date).fromNow();
@@ -300,8 +331,28 @@ export default {
           this.posts = res.data.content;
           this.posts.forEach((post) => {
             post.countLikes = post.likes.length;
+            post.active_like = false;
           });
-          console.log(this.posts);
+          for (let index = 0; index < this.posts.length; index++) {
+            // this.checkLike(this.posts[index].id);
+            // this.posts[index].active_like = this.active_like;
+            axios
+              .post(
+                "/api/likes/check",
+                {
+                  id_post: this.posts[index].id,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
+              )
+              .then((res) => {
+                this.posts[index].active_like = res.data.check;
+              })
+              .catch((err) => {});
+          }
         });
     },
     createPost() {
@@ -342,11 +393,30 @@ export default {
           }
         )
         .then((res) => {
-          console.log(res);
-          console.log(this.posts);
           this.posts[index].countLikes = res.data.count;
+          this.posts[index].active_like = res.data.check;
         });
     },
+    // checkLike(idPost) {
+    //   axios
+    //     .post(
+    //       "/api/likes/check",
+    //       {
+    //         id_post: idPost,
+    //       },
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //         },
+    //       }
+    //     )
+    //     .then((res) => {
+    //       // this.active_like = res.data.check;
+    //       let check = res.data.check;
+    //       return check;
+    //     })
+    //     .catch((err) => {});
+    // },
   },
 };
 </script>
