@@ -2,9 +2,13 @@
   <div class="container block info">
     <a @click="logout()">Выход</a>
     <div>
-      <img :src="me.avatar" alt="" />
+      <img v-if="load == true" src="../../../public/img/no_avatar.jpg" alt="" />
+      <img v-if="load != true" :src="me.avatar" alt="" />
       <label for="changeAvatar">Изменить фотографию</label>
       <input type="file" ref="avatar" @change="handleFile" id="changeAvatar" />
+      <div v-if="load == true">
+        <div class="active_loading"></div>
+      </div>
       <p @click="modal = true">{{ me.name }} {{ me.surname }}</p>
     </div>
   </div>
@@ -38,6 +42,7 @@
 export default {
   data() {
     return {
+      load: true,
       me: [],
       modal: false,
       name: "",
@@ -64,6 +69,7 @@ export default {
           this.$store.state.user.name = this.me.name;
           this.$store.state.user.surname = this.me.surname;
           this.$store.state.user.email = this.me.email;
+          this.load = false;
         })
         .catch((err) => {
           this.$router.push("/");
@@ -118,6 +124,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.active_loading {
+  background: linear-gradient(110deg, #525252, #474747 18%, #525252);
+  border-radius: 5px;
+  width: 270px;
+  height: 28px;
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+}
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
 .background {
   position: absolute;
   top: 0;

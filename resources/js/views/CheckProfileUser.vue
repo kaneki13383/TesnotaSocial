@@ -1,7 +1,11 @@
 <template>
   <div class="container block info">
     <div>
-      <img :src="user.avatar" alt="" />
+      <img v-if="load == true" src="../../../public/img/no_avatar.jpg" alt="" />
+      <img v-if="load != true" :src="user.avatar" alt="" />
+      <div v-if="load == true">
+        <div class="active_loading"></div>
+      </div>
       <p>{{ user.name }} {{ user.surname }}</p>
     </div>
   </div>
@@ -15,6 +19,7 @@ export default {
     return {
       id: "",
       user: [],
+      load: true,
     };
   },
   mounted() {
@@ -32,6 +37,7 @@ export default {
         })
         .then((res) => {
           this.user = res.data;
+          this.load = false;
         });
     },
   },
@@ -39,6 +45,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.active_loading {
+  background: linear-gradient(110deg, #525252, #474747 18%, #525252);
+  border-radius: 5px;
+  width: 270px;
+  height: 28px;
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+}
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
 .info {
   a {
     float: right;
