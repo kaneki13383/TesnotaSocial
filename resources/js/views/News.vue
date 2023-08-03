@@ -139,11 +139,13 @@
 
           <div class="preview_photo">
             <div v-for="(photo, index) in url" :key="photo" id="preview">
-              <img
+              <p
                 @click="url.splice(index, 1), removeFile(index)"
-                v-if="url"
-                :src="photo"
-              />
+                class="remove_photo"
+              >
+                ✖
+              </p>
+              <img v-if="url" :src="photo" />
             </div>
           </div>
         </div>
@@ -155,7 +157,8 @@
           <p>{{ error }}</p>
         </div>
       </form>
-      <div v-for="post in posts" :key="post" class="block post">
+
+      <div v-for="(post, index) in posts" :key="post" class="block post">
         <div class="header_post">
           <img :src="post.id_user.avatar" alt="" />
           <div>
@@ -180,7 +183,7 @@
           </Carousel>
         </div>
         <div class="footer_post">
-          <div>
+          <div @click="addLike(post.id, index)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="34"
@@ -197,7 +200,7 @@
                 fill="#AF3131"
               />
             </svg>
-            <p>4</p>
+            <p>{{ post.countLikes }}</p>
           </div>
           <div>
             <svg
@@ -240,7 +243,6 @@ moment.locale("ru");
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
 import CarouselFixComponentVue from "../components/CarouselFixComponent.vue";
-import PreviewPhotoVue from "../components/PreviewPhoto.vue";
 
 export default {
   components: {
@@ -249,7 +251,6 @@ export default {
     Pagination,
     Navigation,
     CarouselFixComponentVue,
-    PreviewPhotoVue,
   },
   data() {
     return {
@@ -297,6 +298,10 @@ export default {
         })
         .then((res) => {
           this.posts = res.data.content;
+          this.posts.forEach((post) => {
+            post.countLikes = post.likes.length;
+          });
+          console.log(this.posts);
         });
     },
     createPost() {
@@ -323,6 +328,25 @@ export default {
           this.error = err.message;
         });
     },
+    addLike(idPost, index) {
+      axios
+        .post(
+          "/api/likes/create",
+          {
+            id_post: idPost,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          console.log(this.posts);
+          this.posts[index].countLikes = res.data.count;
+        });
+    },
   },
 };
 </script>
@@ -331,9 +355,24 @@ export default {
 .preview_photo {
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
   #preview img {
     max-width: 400px;
     max-height: 300px;
+  }
+  .remove_photo {
+    cursor: pointer;
+    color: #af3131;
+    transition: 0.5s;
+    position: absolute;
+    padding-left: 4px;
+    padding-bottom: 2px;
+    padding-right: 4px;
+    font-size: 20px;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .remove_photo:hover {
+    color: red;
   }
 }
 

@@ -22,10 +22,17 @@ class PostController extends Controller
     {
         $user = User::find(Auth::guard('sanctum')->id());
 
-        $post = Post::create([
-            'id_user' => $user->id,
-            'text' => $request->input('text')
-        ]);
+        if ($request->input('text')) {
+            $post = Post::create([
+                'id_user' => $user->id,
+                'text' => $request->input('text')
+            ]);
+        } else {
+            $post = Post::create([
+                'id_user' => $user->id,
+                'text' => ''
+            ]);
+        }
 
         $data = $request->file;
 

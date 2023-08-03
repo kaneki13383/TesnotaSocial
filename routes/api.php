@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Autorization;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,4 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Все что связано с постами
     Route::get('/post/all', [PostController::class, 'getAllPosts']);
     Route::post('/post/create', [PostController::class, 'createPost']);
+
+    // Лайки постов
+    Route::post('/likes/create', [LikeController::class, 'store']);
+    Route::delete('/likes/{id}/delete', [LikeController::class, 'destroy']);
 });

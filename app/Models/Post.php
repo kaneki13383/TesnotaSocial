@@ -18,4 +18,8 @@ class Post extends Model
     {
         return $this->belongsTo(PhotoPost::class, 'id');
     }
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'id_post');
+    }
 }
