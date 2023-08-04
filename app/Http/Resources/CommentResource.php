@@ -2,13 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Comment;
-use App\Models\Like;
-use App\Models\PhotoPost;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AllPostsResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,11 +17,9 @@ class AllPostsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'id_user' => User::find($this->id_user),
-            'text' => $this->text,
-            'photos' => PhotoPost::where('id_post', $this->id)->get(),
-            'likes' => $this->likes,
-            'comments' => CommentResource::collection(Comment::where('id_post', $this->id)->get()),
+            'id_user' =>  User::find($this->id_user),
+            'id_post' => $this->id_post,
+            'comment' => $this->comment,
             'created_at' => $this->created_at
         ];
     }

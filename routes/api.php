@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Autorization;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
@@ -37,4 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/likes/create', [LikeController::class, 'store']);
     Route::delete('/likes/{id}/delete', [LikeController::class, 'destroy']);
     Route::post('/likes/check', [LikeController::class, 'checkLike']);
+
+    // Комментарии к постам
+    Route::post('/comment/create', [CommentController::class, 'createCommnet']);
+    Route::post('/comment/all', [CommentController::class, 'allPostComments']);
 });

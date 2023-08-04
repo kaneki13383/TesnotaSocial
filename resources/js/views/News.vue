@@ -157,7 +157,7 @@
           <p>{{ error }}</p>
         </div>
       </form>
-
+      <!-- Loader -->
       <div v-if="load == true" v-for="post in 2" :key="post" class="block post">
         <div class="header_post">
           <div class="curcle_loading"></div>
@@ -248,7 +248,7 @@
           </div>
         </div>
       </div>
-
+      <!-- Сами посты -->
       <div v-for="(post, index) in posts" :key="post" class="block post">
         <div class="header_post">
           <router-link
@@ -347,7 +347,7 @@
             </svg>
             <p>{{ post.countLikes }}</p>
           </div>
-          <div>
+          <div @click="(modal = true), (id_post = post.id), allComments()">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="29"
@@ -372,12 +372,55 @@
                 </clipPath>
               </defs>
             </svg>
-            <p>4</p>
+            <p>{{ post.comments.length }}</p>
           </div>
         </div>
       </div>
     </div>
     <div class="block weather">Потом сделаю</div>
+  </div>
+  <div v-if="modal == true" class="background">
+    <div class="container block content">
+      <p @click="modal = false">✖</p>
+      <div class="all_coments">
+        <div v-for="comment in all_comments" :key="comment" class="comment">
+          <router-link
+            v-if="this.$store.state.user.id != comment.id_user.id"
+            :to="{ path: '/user/' + comment.id_user.id }"
+          >
+            <div class="header">
+              <img :src="comment.id_user.avatar" alt="" />
+              <div class="inf">
+                <p>{{ comment.id_user.name }} {{ comment.id_user.surname }}</p>
+                <p>{{ getHumanDate(comment.created_at) }}</p>
+              </div>
+            </div>
+          </router-link>
+
+          <router-link
+            v-if="this.$store.state.user.id == comment.id_user.id"
+            :to="{ path: '/profile' }"
+          >
+            <div class="header">
+              <img :src="comment.id_user.avatar" alt="" />
+              <div class="inf">
+                <p>{{ comment.id_user.name }} {{ comment.id_user.surname }}</p>
+                <p>{{ getHumanDate(comment.created_at) }}</p>
+              </div>
+            </div>
+          </router-link>
+          <div class="content">
+            <p>{{ comment.comment }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="create_comment">
+        <form action="">
+          <input type="text" v-model="comment" placeholder="Крутое фото!!!" />
+          <button @click.prevent="createComment()">Отправить</button>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -407,7 +450,11 @@ export default {
       files: [],
       url: [],
       active_like: [],
+      all_comments: [],
       load: true,
+      modal: false,
+      id_post: 0,
+      comment: "",
     };
   },
   mounted() {
@@ -449,8 +496,6 @@ export default {
             post.active_like = false;
           });
           for (let index = 0; index < this.posts.length; index++) {
-            // this.checkLike(this.posts[index].id);
-            // this.posts[index].active_like = this.active_like;
             axios
               .post(
                 "/api/likes/check",
@@ -469,6 +514,7 @@ export default {
               })
               .catch((err) => {});
           }
+          console.log(this.posts);
         });
     },
     createPost() {
@@ -513,11 +559,137 @@ export default {
           this.posts[index].active_like = res.data.check;
         });
     },
+    createComment() {
+      axios
+        .post(
+          "/api/comment/create",
+          {
+            id_post: this.id_post,
+            comment: this.comment,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .then((res) => {
+          this.comment = "";
+          this.allComments();
+        });
+    },
+    allComments() {
+      axios
+        .post(
+          "/api/comment/all",
+          {
+            id_post: this.id_post,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .then((res) => {
+          this.all_comments = res.data.data;
+        });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.background {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  .content {
+    display: flex;
+    flex-direction: column;
+    p {
+      cursor: pointer;
+    }
+    .all_coments {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-left: 2%;
+      .comment {
+        border: 2px solid #525252;
+        border-radius: 10px;
+        padding: 20px;
+        a {
+          text-decoration: none;
+          .header {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            img {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+            }
+            .inf {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              p {
+                position: relative;
+                color: white;
+                font-size: 15px;
+              }
+              p:nth-child(2) {
+                font-size: 13px;
+                color: #606060;
+              }
+            }
+          }
+        }
+        .content {
+          padding: 20px 30px;
+          p {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+  .block {
+    p {
+      position: absolute;
+      color: #af3131;
+    }
+  }
+  height: 100vh;
+}
+.create_comment {
+  margin-top: 20px;
+  form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    input {
+      width: 320px;
+      height: 30px;
+      background: transparent;
+      border: 2px solid #af3131;
+      border-radius: 10px;
+      padding-left: 5px;
+    }
+    button {
+      background: transparent;
+      border: 2px solid #af3131;
+      border-radius: 10px;
+      padding: 5px 25px;
+      cursor: pointer;
+    }
+  }
+}
 .active_loading {
   background: linear-gradient(110deg, #525252, #474747 18%, #525252);
   border-radius: 5px;
