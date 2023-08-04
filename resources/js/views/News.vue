@@ -372,7 +372,7 @@
                 </clipPath>
               </defs>
             </svg>
-            <p>{{ post.comments.length }}</p>
+            <p>{{ post.countComments }}</p>
           </div>
         </div>
       </div>
@@ -524,6 +524,7 @@ export default {
           this.posts.forEach((post) => {
             post.countLikes = post.likes.length;
             post.active_like = false;
+            post.countComments = post.comments.length;
           });
           for (let index = 0; index < this.posts.length; index++) {
             axios
@@ -605,7 +606,24 @@ export default {
         )
         .then((res) => {
           this.comment = "";
-          this.allComments();
+          this.posts[this.id_post - 1].countComments++;
+
+          axios
+            .post(
+              "/api/comment/all",
+              {
+                id_post: this.id_post,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            )
+            .then((res) => {
+              let arr = res.data.data;
+              this.all_comments.push(arr[arr.length - 1]);
+            });
         });
     },
     allComments() {
