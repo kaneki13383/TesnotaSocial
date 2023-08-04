@@ -381,8 +381,30 @@
   </div>
   <div v-if="modal == true" class="background">
     <div class="container block content">
+      <!-- Loader -->
+      <div v-if="load_comm == true" class="all_coments">
+        <div v-for="comment in 5" :key="comment" class="comment">
+          <a>
+            <div class="header">
+              <div class="curcle_loading"></div>
+              <div class="inf">
+                <div class="text_loading"></div>
+                <div class="text_loading"></div>
+              </div>
+            </div>
+          </a>
+
+          <div class="content">
+            <div class="text_loading"></div>
+          </div>
+        </div>
+      </div>
       <p @click="modal = false">✖</p>
-      <div class="all_coments">
+      <div class="no_comm" v-if="all_comments.length == 0">
+        <p>Пока никто не оставил коментарий</p>
+      </div>
+      <!-- Коментарии -->
+      <div v-else class="all_coments">
         <div v-for="comment in all_comments" :key="comment" class="comment">
           <router-link
             v-if="this.$store.state.user.id != comment.id_user.id"
@@ -452,6 +474,7 @@ export default {
       active_like: [],
       all_comments: [],
       load: true,
+      load_comm: true,
       modal: false,
       id_post: 0,
       comment: "",
@@ -460,6 +483,13 @@ export default {
   mounted() {
     document.title = "Новости";
     this.allPosts();
+  },
+  updated() {
+    if (this.modal == true) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
   },
   methods: {
     removeFile(key) {
@@ -579,6 +609,7 @@ export default {
         });
     },
     allComments() {
+      this.load_comm = true;
       axios
         .post(
           "/api/comment/all",
@@ -593,6 +624,7 @@ export default {
         )
         .then((res) => {
           this.all_comments = res.data.data;
+          this.load_comm = false;
         });
     },
   },
@@ -609,6 +641,15 @@ export default {
   .content {
     display: flex;
     flex-direction: column;
+    .no_comm {
+      display: flex;
+      justify-content: center;
+      padding: 5% 0;
+      p {
+        font-size: 25px;
+        color: white;
+      }
+    }
     p {
       cursor: pointer;
     }
@@ -617,6 +658,8 @@ export default {
       flex-direction: column;
       gap: 20px;
       margin-left: 2%;
+      max-height: 80vh;
+      overflow-y: auto;
       .comment {
         border: 2px solid #525252;
         border-radius: 10px;
@@ -626,6 +669,7 @@ export default {
           .header {
             display: flex;
             flex-direction: row;
+            align-items: center;
             gap: 10px;
             img {
               width: 50px;
@@ -653,6 +697,7 @@ export default {
           padding: 20px 30px;
           p {
             color: white;
+            position: relative;
           }
         }
       }
