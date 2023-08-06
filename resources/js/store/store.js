@@ -8,7 +8,8 @@ export default createStore({
                 surname: '',
                 email: '',
                 avatar: '',
-            }
+            },
+              page: 0
         }
     },
 })

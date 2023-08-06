@@ -248,8 +248,8 @@
           </div>
         </div>
       </div>
-      <!-- Сами посты -->
-      <div v-for="(post, index) in posts" :key="post" class="block post">
+      <!-- Сами посты v-for="(post, index) in posts" :key="post"-->
+      <div v-for="(post, index) in posts.posts" :key="post" class="block post">
         <div class="header_post">
           <router-link
             v-if="this.$store.state.user.id != post.id_user.id"
@@ -284,7 +284,7 @@
             {{ post.text }}
           </p>
 
-          <Carousel v-if="post.photos.length != 1">
+          <Carousel v-if="post.photos.length > 1">
             <Slide v-for="slide in post.photos" :key="slide">
               <img :src="slide.photo" alt="" />
             </Slide>
@@ -294,7 +294,11 @@
               <Pagination />
             </template>
           </Carousel>
-          <img v-else :src="post.photos[0].photo" alt="" />
+          <img
+            v-else-if="post.photos.length == 1"
+            :src="post.photos[0].photo"
+            alt=""
+          />
         </div>
         <div class="footer_post">
           <div @click="addLike(post.id, index)">
@@ -448,27 +452,19 @@
 
 <script>
 import moment from "moment/min/moment-with-locales";
-moment.locale("ru");
-
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
 import CarouselFixComponentVue from "../components/CarouselFixComponent.vue";
 
+moment.locale("ru");
+
 export default {
-  components: {
-    Carousel,
-    Slide,
-    Pagination,
-    Navigation,
-    CarouselFixComponentVue,
-  },
   data() {
     return {
       create_post: false,
       text: "",
       message: "",
       error: "",
-      posts: [],
       files: [],
       url: [],
       active_like: [],
@@ -478,11 +474,20 @@ export default {
       modal: false,
       id_post: 0,
       comment: "",
+      posts: [],
     };
   },
   mounted() {
     document.title = "Новости";
     this.allPosts();
+    this.ScrollCheck();
+  },
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation,
+    CarouselFixComponentVue,
   },
   updated() {
     if (this.modal == true) {
@@ -491,7 +496,107 @@ export default {
       document.body.style.overflow = "auto";
     }
   },
+  created: function () {
+    window.addEventListener("scroll", this.ScrollCheck);
+  },
+  destroyed: function () {
+    window.removeEventListener("scroll", this.ScrollCheck);
+  },
   methods: {
+    ScrollCheck: function () {
+      let height = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+      let my_height = document.documentElement.scrollTop + window.innerHeight;
+      if (height == my_height) {
+        console.log("Дошли");
+        if (
+          this.posts.pagination.current_page != this.posts.pagination.last_page
+        ) {
+          this.nextPosts();
+        }
+      }
+    },
+    allPosts() {
+      axios
+        .get("/api/post/all", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((res) => {
+          this.posts = res.data;
+          this.$store.state.page = this.posts.pagination.current_page;
+
+          this.posts.posts.forEach((post) => {
+            post.countLikes = post.likes.length;
+            post.active_like = false;
+            post.countComments = post.comments.length;
+          });
+          for (let index = 0; index < this.posts.posts.length; index++) {
+            axios
+              .post(
+                "/api/likes/check",
+                {
+                  id_post: this.posts.posts[index].id,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
+              )
+              .then((res) => {
+                this.posts.posts[index].active_like = res.data.check;
+                this.load = false;
+              })
+              .catch((err) => {});
+          }
+        });
+    },
+    nextPosts() {
+      axios
+        .get(`/api/post/all?page=${this.posts.pagination.current_page + 1}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          for (let index = 0; index < response.data.posts.length; index++) {
+            this.posts.posts.push(response.data.posts[index]);
+          }
+          this.posts.pagination = response.data.pagination;
+          this.posts.posts.forEach((post) => {
+            post.countLikes = post.likes.length;
+            post.active_like = false;
+            post.countComments = post.comments.length;
+          });
+          for (let index = 0; index < this.posts.posts.length; index++) {
+            axios
+              .post(
+                "/api/likes/check",
+                {
+                  id_post: this.posts.posts[index].id,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
+              )
+              .then((res) => {
+                this.posts.posts[index].active_like = res.data.check;
+                this.load = false;
+              })
+              .catch((err) => {});
+          }
+        });
+    },
     removeFile(key) {
       this.files.splice(key, 1);
     },
@@ -511,42 +616,6 @@ export default {
     },
     getHumanDate: function (date) {
       return moment(date).fromNow();
-    },
-    allPosts() {
-      axios
-        .get("/api/post/all", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then((res) => {
-          this.posts = res.data.content;
-          this.posts.forEach((post) => {
-            post.countLikes = post.likes.length;
-            post.active_like = false;
-            post.countComments = post.comments.length;
-          });
-          for (let index = 0; index < this.posts.length; index++) {
-            axios
-              .post(
-                "/api/likes/check",
-                {
-                  id_post: this.posts[index].id,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                }
-              )
-              .then((res) => {
-                this.posts[index].active_like = res.data.check;
-                this.load = false;
-              })
-              .catch((err) => {});
-          }
-          console.log(this.posts);
-        });
     },
     createPost() {
       let fd = new FormData();
@@ -586,8 +655,8 @@ export default {
           }
         )
         .then((res) => {
-          this.posts[index].countLikes = res.data.count;
-          this.posts[index].active_like = res.data.check;
+          this.posts.posts[index].countLikes = res.data.count;
+          this.posts.posts[index].active_like = res.data.check;
         });
     },
     createComment() {

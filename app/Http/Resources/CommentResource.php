@@ -20,7 +20,8 @@ class CommentResource extends JsonResource
             'id_user' =>  User::find($this->id_user),
             'id_post' => $this->id_post,
             'comment' => $this->comment,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+            'current_page' => $this->current_page
         ];
     }
 }

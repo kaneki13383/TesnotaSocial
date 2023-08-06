@@ -243,17 +243,21 @@ export default {
       this.token = localStorage.getItem("token");
     },
     getMe() {
-      axios
-        .get("/api/me", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-        .then((res) => {
-          this.me = res.data.content;
-          this.$store.state.user.id = this.me.id;
-        })
-        .catch((err) => {
-          this.$router.push("/");
-        });
+      if (this.token) {
+        axios
+          .get("/api/me", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then((res) => {
+            this.me = res.data.content;
+            this.$store.state.user.id = this.me.id;
+          })
+          .catch((err) => {
+            this.$router.push("/");
+          });
+      }
     },
   },
 };

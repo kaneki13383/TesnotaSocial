@@ -15,7 +15,8 @@ class PostController extends Controller
     public function getAllPosts()
     {
         return response()->json([
-            'content' => AllPostsResource::collection(Post::all())
+            'posts' => AllPostsResource::collection(Post::latest()->paginate(5)),
+            'pagination' => Post::latest()->paginate(5)
         ]);
     }
     public function createPost(Request $request)
@@ -36,12 +37,14 @@ class PostController extends Controller
 
         $data = $request->file;
 
-        foreach ($data as $photo) {
-            $path = Storage::disk('public')->put('photo_posts', $photo);
-            PhotoPost::create([
-                'id_post' => $post->id,
-                'photo' => 'storage/' . $path
-            ]);
+        if ($data) {
+            foreach ($data as $photo) {
+                $path = Storage::disk('public')->put('photo_posts', $photo);
+                PhotoPost::create([
+                    'id_post' => $post->id,
+                    'photo' => 'storage/' . $path
+                ]);
+            }
         }
 
         return response()->json([
