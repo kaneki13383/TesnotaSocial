@@ -131,6 +131,7 @@
             type="file"
             id="file"
             ref="file"
+            accept=".png,.webp,.jpg,.jpeg"
             required
             v-on:change="handleFileUpload()"
           />
@@ -157,97 +158,6 @@
           <p>{{ error }}</p>
         </div>
       </form>
-      <!-- Loader -->
-      <div v-if="load == true" v-for="post in 2" :key="post" class="block post">
-        <div class="header_post">
-          <div class="curcle_loading"></div>
-          <div>
-            <div class="text_loading"></div>
-
-            <div class="text_loading"></div>
-          </div>
-        </div>
-        <div class="body_post active_loading"></div>
-        <div class="footer_post">
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="34"
-              height="40"
-              viewBox="0 0 34 40"
-              fill="none"
-              v-if="post.active_like == true"
-            >
-              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
-              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
-              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
-              <path
-                d="M23.0625 6.25C20.8583 6.25 18.7989 7.35125 17.3333 9.2575C15.8677 7.35125 13.8083 6.25 11.6042 6.25C7.29582 6.25 3.79166 10.4163 3.79166 15.625C3.79166 26.9275 17.3333 33.75 17.3333 33.75C17.3333 33.75 30.875 26.9275 30.875 15.625C30.875 10.4163 27.3708 6.25 23.0625 6.25ZM17.3333 30.9963C14.6021 29.4013 5.87499 23.6725 5.87499 15.625C5.87499 11.8337 8.44478 8.75 11.6042 8.75C13.2187 8.75 14.7104 9.5325 15.8021 10.9525L16.5677 11.9488H18.0989L18.8646 10.9525C19.9562 9.5325 21.4479 8.75 23.0625 8.75C26.2219 8.75 28.7917 11.8337 28.7917 15.625C28.7917 23.6725 20.0646 29.4013 17.3333 30.9963Z"
-                fill="#AF3131"
-              />
-              <ellipse
-                cx="11.9166"
-                cy="16.5"
-                rx="7.08333"
-                ry="8.5"
-                fill="#AF3131"
-              />
-              <ellipse
-                cx="17.3333"
-                cy="24.5"
-                rx="8.33333"
-                ry="6.5"
-                fill="#AF3131"
-              />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="34"
-              height="40"
-              viewBox="0 0 34 40"
-              fill="none"
-              v-else
-            >
-              <path
-                d="M11.6042 10V12.5C10.1687 12.5 8.99999 13.9013 8.99999 15.625H6.91666C6.91666 12.5238 9.01978 10 11.6042 10Z"
-                fill="#AF3131"
-              />
-              <path
-                d="M23.0032 6.25C20.8058 6.25 18.7528 7.33123 17.2917 9.20282C15.8305 7.33123 13.7775 6.25 11.5801 6.25C7.28504 6.25 3.79166 10.3405 3.79166 15.4545C3.79166 26.5515 17.2917 33.25 17.2917 33.25C17.2917 33.25 30.7917 26.5515 30.7917 15.4545C30.7917 10.3405 27.2983 6.25 23.0032 6.25ZM17.2917 30.5463C14.5688 28.9803 5.86858 23.3557 5.86858 15.4545C5.86858 11.7322 8.43046 8.70455 11.5801 8.70455C13.1897 8.70455 14.6768 9.47282 15.7651 10.867L16.5284 11.8451H18.0549L18.8182 10.867C19.9065 9.47282 21.3936 8.70455 23.0032 8.70455C26.1528 8.70455 28.7147 11.7322 28.7147 15.4545C28.7147 23.3557 20.0145 28.9803 17.2917 30.5463Z"
-                fill="#AF3131"
-              />
-            </svg>
-            <p></p>
-          </div>
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="29"
-              height="33"
-              viewBox="0 0 29 33"
-              fill="none"
-            >
-              <g clip-path="url(#clip0_6_51)">
-                <path
-                  d="M14.9323 2.0625C7.36981 2.0625 0.666687 7.425 0.666687 13.6125C0.666687 17.7375 2.55731 21.2437 5.82294 23.3062V23.5125C5.65106 26.1937 4.27606 27.0188 4.27606 27.0188L1.18231 28.875H4.61981C8.91669 28.875 12.0104 26.6063 13.3854 24.9563C13.9011 24.9563 14.2448 24.9563 14.7604 24.9563C22.1511 24.9563 28.1667 19.8 28.1667 13.4062C28.1667 7.0125 22.3229 2.0625 14.9323 2.0625ZM14.7604 22.8938C14.2448 22.8938 13.5573 22.8938 13.2136 22.8938H12.6979L12.3542 23.3062C11.4948 24.3375 9.60419 26.1938 6.68231 26.8125C7.19794 25.7812 7.54169 24.5438 7.54169 22.6875V22.0688L7.02606 21.8625C3.93231 20.0063 2.38544 17.1187 2.38544 13.6125C2.38544 8.6625 8.40106 4.125 14.9323 4.125C21.2917 4.125 26.4479 8.25 26.4479 13.6125C26.4479 18.5625 21.1198 22.8938 14.7604 22.8938Z"
-                  fill="#AF3131"
-                />
-              </g>
-              <defs>
-                <clipPath id="clip0_6_51">
-                  <rect
-                    width="27.5"
-                    height="33"
-                    fill="white"
-                    transform="translate(0.666687)"
-                  />
-                </clipPath>
-              </defs>
-            </svg>
-            <p></p>
-          </div>
-        </div>
-      </div>
       <!-- Сами посты v-for="(post, index) in posts" :key="post"-->
       <div v-for="(post, index) in posts.posts" :key="post" class="block post">
         <div class="header_post">
@@ -351,7 +261,14 @@
             </svg>
             <p>{{ post.countLikes }}</p>
           </div>
-          <div @click="(modal = true), (id_post = post.id), allComments()">
+          <div
+            @click="
+              (modal = true),
+                (id_post = post.id),
+                (index_post = index),
+                allComments()
+            "
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="29"
@@ -377,6 +294,97 @@
               </defs>
             </svg>
             <p>{{ post.countComments }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- Loader -->
+      <div v-if="load == true" v-for="post in 2" :key="post" class="block post">
+        <div class="header_post">
+          <div class="curcle_loading"></div>
+          <div>
+            <div class="text_loading"></div>
+
+            <div class="text_loading"></div>
+          </div>
+        </div>
+        <div class="body_post active_loading"></div>
+        <div class="footer_post">
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="34"
+              height="40"
+              viewBox="0 0 34 40"
+              fill="none"
+              v-if="post.active_like == true"
+            >
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <ellipse cx="22.75" cy="16.5" rx="6.25" ry="8.5" fill="#AF3131" />
+              <path
+                d="M23.0625 6.25C20.8583 6.25 18.7989 7.35125 17.3333 9.2575C15.8677 7.35125 13.8083 6.25 11.6042 6.25C7.29582 6.25 3.79166 10.4163 3.79166 15.625C3.79166 26.9275 17.3333 33.75 17.3333 33.75C17.3333 33.75 30.875 26.9275 30.875 15.625C30.875 10.4163 27.3708 6.25 23.0625 6.25ZM17.3333 30.9963C14.6021 29.4013 5.87499 23.6725 5.87499 15.625C5.87499 11.8337 8.44478 8.75 11.6042 8.75C13.2187 8.75 14.7104 9.5325 15.8021 10.9525L16.5677 11.9488H18.0989L18.8646 10.9525C19.9562 9.5325 21.4479 8.75 23.0625 8.75C26.2219 8.75 28.7917 11.8337 28.7917 15.625C28.7917 23.6725 20.0646 29.4013 17.3333 30.9963Z"
+                fill="#AF3131"
+              />
+              <ellipse
+                cx="11.9166"
+                cy="16.5"
+                rx="7.08333"
+                ry="8.5"
+                fill="#AF3131"
+              />
+              <ellipse
+                cx="17.3333"
+                cy="24.5"
+                rx="8.33333"
+                ry="6.5"
+                fill="#AF3131"
+              />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="34"
+              height="40"
+              viewBox="0 0 34 40"
+              fill="none"
+              v-else
+            >
+              <path
+                d="M11.6042 10V12.5C10.1687 12.5 8.99999 13.9013 8.99999 15.625H6.91666C6.91666 12.5238 9.01978 10 11.6042 10Z"
+                fill="#AF3131"
+              />
+              <path
+                d="M23.0032 6.25C20.8058 6.25 18.7528 7.33123 17.2917 9.20282C15.8305 7.33123 13.7775 6.25 11.5801 6.25C7.28504 6.25 3.79166 10.3405 3.79166 15.4545C3.79166 26.5515 17.2917 33.25 17.2917 33.25C17.2917 33.25 30.7917 26.5515 30.7917 15.4545C30.7917 10.3405 27.2983 6.25 23.0032 6.25ZM17.2917 30.5463C14.5688 28.9803 5.86858 23.3557 5.86858 15.4545C5.86858 11.7322 8.43046 8.70455 11.5801 8.70455C13.1897 8.70455 14.6768 9.47282 15.7651 10.867L16.5284 11.8451H18.0549L18.8182 10.867C19.9065 9.47282 21.3936 8.70455 23.0032 8.70455C26.1528 8.70455 28.7147 11.7322 28.7147 15.4545C28.7147 23.3557 20.0145 28.9803 17.2917 30.5463Z"
+                fill="#AF3131"
+              />
+            </svg>
+            <p></p>
+          </div>
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="29"
+              height="33"
+              viewBox="0 0 29 33"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_6_51)">
+                <path
+                  d="M14.9323 2.0625C7.36981 2.0625 0.666687 7.425 0.666687 13.6125C0.666687 17.7375 2.55731 21.2437 5.82294 23.3062V23.5125C5.65106 26.1937 4.27606 27.0188 4.27606 27.0188L1.18231 28.875H4.61981C8.91669 28.875 12.0104 26.6063 13.3854 24.9563C13.9011 24.9563 14.2448 24.9563 14.7604 24.9563C22.1511 24.9563 28.1667 19.8 28.1667 13.4062C28.1667 7.0125 22.3229 2.0625 14.9323 2.0625ZM14.7604 22.8938C14.2448 22.8938 13.5573 22.8938 13.2136 22.8938H12.6979L12.3542 23.3062C11.4948 24.3375 9.60419 26.1938 6.68231 26.8125C7.19794 25.7812 7.54169 24.5438 7.54169 22.6875V22.0688L7.02606 21.8625C3.93231 20.0063 2.38544 17.1187 2.38544 13.6125C2.38544 8.6625 8.40106 4.125 14.9323 4.125C21.2917 4.125 26.4479 8.25 26.4479 13.6125C26.4479 18.5625 21.1198 22.8938 14.7604 22.8938Z"
+                  fill="#AF3131"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_6_51">
+                  <rect
+                    width="27.5"
+                    height="33"
+                    fill="white"
+                    transform="translate(0.666687)"
+                  />
+                </clipPath>
+              </defs>
+            </svg>
+            <p></p>
           </div>
         </div>
       </div>
@@ -473,6 +481,7 @@ export default {
       load_comm: true,
       modal: false,
       id_post: 0,
+      index_post: 0,
       comment: "",
       posts: [],
     };
@@ -496,14 +505,12 @@ export default {
       document.body.style.overflow = "auto";
     }
   },
-  created: function () {
-    window.addEventListener("scroll", this.ScrollCheck);
-  },
   destroyed: function () {
     window.removeEventListener("scroll", this.ScrollCheck);
   },
   methods: {
     ScrollCheck: function () {
+      window.addEventListener("scroll", this.ScrollCheck);
       let height = Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight,
@@ -514,11 +521,13 @@ export default {
       );
       let my_height = document.documentElement.scrollTop + window.innerHeight;
       if (height == my_height) {
-        console.log("Дошли");
         if (
-          this.posts.pagination.current_page != this.posts.pagination.last_page
+          this.posts.pagination.current_page < this.posts.pagination.last_page
         ) {
           this.nextPosts();
+          window.removeEventListener("scroll", this.ScrollCheck);
+        } else {
+          window.removeEventListener("scroll", this.ScrollCheck);
         }
       }
     },
@@ -636,6 +645,7 @@ export default {
           this.files = [];
           this.url = [];
           this.allPosts();
+          window.addEventListener("scroll", this.ScrollCheck);
         })
         .catch((err) => {
           this.error = err.message;
@@ -675,7 +685,7 @@ export default {
         )
         .then((res) => {
           this.comment = "";
-          this.posts[this.id_post - 1].countComments++;
+          this.posts.posts[this.index_post].countComments++;
 
           axios
             .post(

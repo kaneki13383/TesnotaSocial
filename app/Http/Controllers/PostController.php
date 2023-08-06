@@ -15,8 +15,8 @@ class PostController extends Controller
     public function getAllPosts()
     {
         return response()->json([
-            'posts' => AllPostsResource::collection(Post::latest()->paginate(5)),
-            'pagination' => Post::latest()->paginate(5)
+            'posts' => AllPostsResource::collection(Post::latest()->paginate(10)),
+            'pagination' => Post::latest()->paginate(10)
         ]);
     }
     public function createPost(Request $request)
@@ -38,6 +38,9 @@ class PostController extends Controller
         $data = $request->file;
 
         if ($data) {
+            $data->validate([
+                'file' => 'mimes:png,jpg,webp,jpeg'
+            ]);
             foreach ($data as $photo) {
                 $path = Storage::disk('public')->put('photo_posts', $photo);
                 PhotoPost::create([

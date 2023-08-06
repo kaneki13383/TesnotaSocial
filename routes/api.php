@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/register', [Autorization::class, 'register']);
-Route::post('/login', [Autorization::class, 'login']);
+Route::post('/login', [Autorization::class, 'login'])->middleware('throttle:4,1');
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -31,13 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{id}', [Autorization::class, 'findUser']);
 
     // Все что связано с постами
-    Route::get('/post/all', [PostController::class, 'getAllPosts']);
+    Route::get('/post/all', [PostController::class, 'getAllPosts'])->middleware('throttle:50000,5');
     Route::post('/post/create', [PostController::class, 'createPost']);
 
     // Лайки постов
     Route::post('/likes/create', [LikeController::class, 'store']);
     Route::delete('/likes/{id}/delete', [LikeController::class, 'destroy']);
-    Route::post('/likes/check', [LikeController::class, 'checkLike']);
+    Route::post('/likes/check', [LikeController::class, 'checkLike'])->middleware('throttle:500000,2');
 
     // Комментарии к постам
     Route::post('/comment/create', [CommentController::class, 'createCommnet']);

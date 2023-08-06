@@ -5,7 +5,13 @@
       <img v-if="load == true" src="../../../public/img/no_avatar.jpg" alt="" />
       <img v-if="load != true" :src="me.avatar" alt="" />
       <label for="changeAvatar">Изменить фотографию</label>
-      <input type="file" ref="avatar" @change="handleFile" id="changeAvatar" />
+      <input
+        type="file"
+        accept=".png,.webp,.jpg,.jpeg"
+        ref="avatar"
+        @change="handleFile"
+        id="changeAvatar"
+      />
       <div v-if="load == true">
         <div class="active_loading"></div>
       </div>
