@@ -109,18 +109,12 @@
       </ul>
     </div>
     <div class="create_post">
-      <form action="">
+      <form id="hide" action="">
         <input
           type="text"
           v-model="text"
-          @click="
-            if (create_post == false) {
-              create_post = true;
-            } else {
-              create_post = false;
-            }
-          "
           placeholder="Расскажите, что у вас нового!"
+          @click.prevent="OpenCreatePost()"
         />
         <div
           v-if="create_post == true"
@@ -161,32 +155,79 @@
       <!-- Сами посты v-for="(post, index) in posts" :key="post"-->
       <div v-for="(post, index) in posts.posts" :key="post" class="block post">
         <div class="header_post">
-          <router-link
-            v-if="this.$store.state.user.id != post.id_user.id"
-            :to="{ path: '/user/' + post.id_user.id }"
-            ><img :src="post.id_user.avatar" alt=""
-          /></router-link>
-          <router-link
-            v-if="this.$store.state.user.id == post.id_user.id"
-            :to="{ path: '/profile' }"
-            ><img :src="post.id_user.avatar" alt=""
-          /></router-link>
           <div>
             <router-link
               v-if="this.$store.state.user.id != post.id_user.id"
               :to="{ path: '/user/' + post.id_user.id }"
-              ><p>
-                {{ post.id_user.name }} {{ post.id_user.surname }}
-              </p></router-link
-            >
+              ><img :src="post.id_user.avatar" alt=""
+            /></router-link>
             <router-link
               v-if="this.$store.state.user.id == post.id_user.id"
               :to="{ path: '/profile' }"
-              ><p>
-                {{ post.id_user.name }} {{ post.id_user.surname }}
-              </p></router-link
+              ><img :src="post.id_user.avatar" alt=""
+            /></router-link>
+            <div>
+              <router-link
+                v-if="this.$store.state.user.id != post.id_user.id"
+                :to="{ path: '/user/' + post.id_user.id }"
+                ><p>
+                  {{ post.id_user.name }} {{ post.id_user.surname }}
+                </p></router-link
+              >
+              <router-link
+                v-if="this.$store.state.user.id == post.id_user.id"
+                :to="{ path: '/profile' }"
+                ><p>
+                  {{ post.id_user.name }} {{ post.id_user.surname }}
+                </p></router-link
+              >
+              <p>{{ getHumanDate(post.created_at) }}</p>
+            </div>
+          </div>
+          <div
+            v-if="this.$store.state.user.id == post.id_user.id"
+            class="actions"
+            @click="Actions()"
+          >
+            <svg
+              fill="#606060"
+              width="30px"
+              height="30px"
+              viewBox="0 0 32 32"
+              enable-background="new 0 0 32 32"
+              id="Glyph"
+              version="1.1"
+              xml:space="preserve"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              stroke="#606060"
             >
-            <p>{{ getHumanDate(post.created_at) }}</p>
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M16,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S17.654,13,16,13z"
+                  id="XMLID_287_"
+                ></path>
+                <path
+                  d="M6,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S7.654,13,6,13z"
+                  id="XMLID_289_"
+                ></path>
+                <path
+                  d="M26,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S27.654,13,26,13z"
+                  id="XMLID_291_"
+                ></path>
+              </g>
+            </svg>
+            <div v-if="action == true" class="dropdown-content">
+              <p>Выбор 1</p>
+              <p>Выбор 1</p>
+              <p>Выбор 1</p>
+            </div>
           </div>
         </div>
         <div class="body_post">
@@ -484,6 +525,7 @@ export default {
       index_post: 0,
       comment: "",
       posts: [],
+      action: false,
     };
   },
   mounted() {
@@ -509,6 +551,20 @@ export default {
     window.removeEventListener("scroll", this.ScrollCheck);
   },
   methods: {
+    CloseCreatePost: function (event) {
+      if (!event.target.matches("#hide")) {
+        var info = document.getElementById("hide");
+        if (!info.contains(event.target)) {
+          this.create_post = false;
+        } else {
+          this.create_post = true;
+        }
+      }
+    },
+    OpenCreatePost() {
+      this.create_post = true;
+      window.onclick = this.CloseCreatePost;
+    },
     ScrollCheck: function () {
       window.addEventListener("scroll", this.ScrollCheck);
       let height = Math.max(
@@ -723,6 +779,13 @@ export default {
           this.all_comments = res.data.data;
           this.load_comm = false;
         });
+    },
+    Actions() {
+      if (this.action == false) {
+        this.action = true;
+      } else {
+        this.action = false;
+      }
     },
   },
 };
@@ -971,27 +1034,46 @@ export default {
   .header_post {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
     div {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
       gap: 10px;
-      a {
-        text-decoration: none;
-        p:nth-child(1) {
-          font-size: 15px;
+      div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        a {
+          text-decoration: none;
+          p:nth-child(1) {
+            font-size: 15px;
+          }
         }
-      }
-      p:nth-child(2) {
-        color: #606060;
-        font-size: 13px;
+        p:nth-child(2) {
+          color: #606060;
+          font-size: 13px;
+        }
       }
     }
     img {
       width: 50px;
       height: 50px;
       border-radius: 50%;
+    }
+    .actions {
+      cursor: pointer;
+      .dropdown-content {
+        position: absolute;
+        top: 25vh;
+        p {
+          color: white !important;
+          font-size: 15px !important ;
+          font-weight: 100;
+        }
+      }
     }
   }
   .body_post {
