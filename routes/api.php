@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Все что связано с постами
     Route::get('/post/all', [PostController::class, 'getAllPosts'])->middleware('throttle:50000,5');
     Route::post('/post/create', [PostController::class, 'createPost']);
+    Route::get('/post/delete/{id}', [PostController::class, 'deletePost']);
 
     // Лайки постов
     Route::post('/likes/create', [LikeController::class, 'store']);

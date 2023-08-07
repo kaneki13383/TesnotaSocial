@@ -187,46 +187,50 @@
           <div
             v-if="this.$store.state.user.id == post.id_user.id"
             class="actions"
-            @click="Actions()"
+            @mouseover="Actions(post.action, index)"
+            @mouseleave="CloseActions(post.action, index)"
           >
-            <svg
-              fill="#606060"
-              width="30px"
-              height="30px"
-              viewBox="0 0 32 32"
-              enable-background="new 0 0 32 32"
-              id="Glyph"
-              version="1.1"
-              xml:space="preserve"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              stroke="#606060"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path
-                  d="M16,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S17.654,13,16,13z"
-                  id="XMLID_287_"
-                ></path>
-                <path
-                  d="M6,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S7.654,13,6,13z"
-                  id="XMLID_289_"
-                ></path>
-                <path
-                  d="M26,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S27.654,13,26,13z"
-                  id="XMLID_291_"
-                ></path>
-              </g>
-            </svg>
-            <div v-if="action == true" class="dropdown-content">
-              <p>Выбор 1</p>
-              <p>Выбор 1</p>
-              <p>Выбор 1</p>
+            <div>
+              <svg
+                fill="#606060"
+                width="30px"
+                height="30px"
+                viewBox="0 0 32 32"
+                enable-background="new 0 0 32 32"
+                id="Glyph"
+                version="1.1"
+                xml:space="preserve"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                stroke="#606060"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="M16,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S17.654,13,16,13z"
+                    id="XMLID_287_"
+                  ></path>
+                  <path
+                    d="M6,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S7.654,13,6,13z"
+                    id="XMLID_289_"
+                  ></path>
+                  <path
+                    d="M26,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S27.654,13,26,13z"
+                    id="XMLID_291_"
+                  ></path>
+                </g>
+              </svg>
+            </div>
+
+            <div v-if="post.action == true" class="dropdown-content">
+              <p @click="DeletePost(post.id, index)">Удалить</p>
+              <p>Редактировать</p>
+              <p>Репост</p>
             </div>
           </div>
         </div>
@@ -602,6 +606,7 @@ export default {
             post.countLikes = post.likes.length;
             post.active_like = false;
             post.countComments = post.comments.length;
+            post.action = false;
           });
           for (let index = 0; index < this.posts.posts.length; index++) {
             axios
@@ -622,6 +627,7 @@ export default {
               })
               .catch((err) => {});
           }
+          console.log(this.posts);
         });
     },
     nextPosts() {
@@ -640,6 +646,7 @@ export default {
             post.countLikes = post.likes.length;
             post.active_like = false;
             post.countComments = post.comments.length;
+            post.action = false;
           });
           for (let index = 0; index < this.posts.posts.length; index++) {
             axios
@@ -780,12 +787,27 @@ export default {
           this.load_comm = false;
         });
     },
-    Actions() {
-      if (this.action == false) {
-        this.action = true;
-      } else {
-        this.action = false;
+    Actions(action, index) {
+      if (action == false) {
+        this.posts.posts[index].action = true;
       }
+    },
+    CloseActions(action, index) {
+      if (action == true) {
+        this.posts.posts[index].action = false;
+      }
+    },
+    DeletePost(id_post, index) {
+      axios
+        .get(`/api/post/delete/${id_post}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((res) => {
+          this.posts.posts.splice(index, 1);
+          console.log(this.posts);
+        });
     },
   },
 };
@@ -1064,14 +1086,35 @@ export default {
       border-radius: 50%;
     }
     .actions {
-      cursor: pointer;
+      svg {
+        cursor: pointer;
+      }
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       .dropdown-content {
         position: absolute;
-        top: 25vh;
+        display: flex;
+        flex-direction: column;
+        background: #353535;
+        border-radius: 10px;
+        align-items: center;
+        padding: 15px 0;
         p {
+          cursor: pointer;
+          width: 100%;
           color: white !important;
           font-size: 15px !important ;
-          font-weight: 100;
+          border-bottom: 2px solid #606060;
+          padding: 0 20px;
+          padding-bottom: 10px;
+        }
+        p:last-child {
+          border: none;
+          padding-bottom: 0;
+        }
+        p:first-child {
+          padding-top: 0;
         }
       }
     }

@@ -54,4 +54,8 @@ class PostController extends Controller
             'message' => 'Пост успешно опубликован'
         ]);
     }
+    public function deletePost($id)
+    {
+        Post::where('id', $id)->delete();
+    }
 }
