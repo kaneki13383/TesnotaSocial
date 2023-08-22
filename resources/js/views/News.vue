@@ -797,7 +797,7 @@ export default {
         this.posts.posts[index].action = false;
       }
     },
-    DeletePost(id_post, index) {
+    DeletePost(id_post, index) { 
       axios
         .get(`/api/post/delete/${id_post}`, {
           headers: {
