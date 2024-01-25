@@ -10,17 +10,23 @@
     </div>
   </div>
 
-  <div class="container block"></div>
+  <div class="container">
+    <CheckUserPostsComponent />
+  </div>
 </template>
 
 <script>
+import CheckUserPostsComponent from "../components/CheckUserPostsComponent.vue";
 export default {
   data() {
     return {
-      id: "",
+      id: 0,
       user: [],
       load: true,
     };
+  },
+  components: {
+    CheckUserPostsComponent,
   },
   mounted() {
     this.getUser();

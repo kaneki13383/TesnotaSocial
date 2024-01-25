@@ -24,21 +24,23 @@ Route::post('/login', [Autorization::class, 'login'])->middleware('throttle:4,1'
 
 Route::middleware('auth:sanctum')->group(function () {
     //Все что связано с пользователем
-    Route::get('/me', [Autorization::class, 'me']);
+    Route::get('/me', [Autorization::class, 'me'])->middleware('throttle:50000,1');
     Route::get('/logout', [Autorization::class, 'logout']);
     Route::post('/change/avatar', [Autorization::class, 'changeAvatar']);
     Route::post('/change/profile', [Autorization::class, 'editProfile']);
     Route::get('/user/{id}', [Autorization::class, 'findUser']);
 
     // Все что связано с постами
-    Route::get('/post/all', [PostController::class, 'getAllPosts'])->middleware('throttle:50000,5');
+    Route::get('/post/all', [PostController::class, 'getAllPosts'])->middleware('throttle:50000,1');
     Route::post('/post/create', [PostController::class, 'createPost']);
     Route::get('/post/delete/{id}', [PostController::class, 'deletePost']);
+    Route::get('/post/my', [PostController::class, 'getMyPosts'])->middleware('throttle:50000,1');
+    Route::get('/post/user/{id}', [PostController::class, 'getUserPosts'])->middleware('throttle:50000,1');
 
     // Лайки постов
     Route::post('/likes/create', [LikeController::class, 'store']);
     Route::delete('/likes/{id}/delete', [LikeController::class, 'destroy']);
-    Route::post('/likes/check', [LikeController::class, 'checkLike'])->middleware('throttle:500000,2');
+    Route::post('/likes/check', [LikeController::class, 'checkLike'])->middleware('throttle:500000,1');
 
     // Комментарии к постам
     Route::post('/comment/create', [CommentController::class, 'createCommnet']);

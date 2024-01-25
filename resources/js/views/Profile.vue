@@ -41,10 +41,13 @@
     </div>
   </div>
 
-  <div class="container block"></div>
+  <div class="container">
+    <MyPostsComponentVue />
+  </div>
 </template>
 
 <script>
+import MyPostsComponentVue from "../components/MyPostsComponent.vue";
 export default {
   data() {
     return {
@@ -55,6 +58,9 @@ export default {
       surname: "",
       email: "",
     };
+  },
+  components: {
+    MyPostsComponentVue,
   },
   mounted() {
     this.getMe();

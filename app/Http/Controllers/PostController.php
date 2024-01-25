@@ -15,8 +15,22 @@ class PostController extends Controller
     public function getAllPosts()
     {
         return response()->json([
-            'posts' => AllPostsResource::collection(Post::latest()->paginate(5)),
-            'pagination' => Post::latest()->paginate(5)
+            'posts' => AllPostsResource::collection(Post::latest()->paginate(10)),
+            'pagination' => Post::latest()->paginate(10)
+        ]);
+    }
+    public function getMyPosts()
+    {
+        return response()->json([
+            'posts' => AllPostsResource::collection(Post::where('id_user', Auth::guard('sanctum')->id())->latest()->paginate(10)),
+            'pagination' => Post::latest()->paginate(10)
+        ]);
+    }
+    public function getUserPosts($id)
+    {
+        return response()->json([
+            'posts' => AllPostsResource::collection(Post::where('id_user', $id)->latest()->paginate(10)),
+            'pagination' => Post::latest()->paginate(10)
         ]);
     }
     public function createPost(Request $request)
