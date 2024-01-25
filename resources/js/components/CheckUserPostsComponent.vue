@@ -348,7 +348,7 @@
     </div>
   </div>
   <div class="container err-msg" v-if="err_msg != ''">
-    <h1>{{ err_msg }}</h1>
+    <h1>{{ err_msg }} {{ user }}</h1>
   </div>
 </template>
 
@@ -360,6 +360,11 @@ import CarouselFixComponentVue from "./CarouselFixComponent.vue";
 
 moment.locale("ru");
 export default {
+  props: {
+    user: {
+      type: Number,
+    },
+  },
   data() {
     return {
       active_like: [],
@@ -373,7 +378,7 @@ export default {
       posts: [],
       action: false,
       err_msg: "",
-      id: window.location.pathname.split("/")[2],
+      id_user: 0,
     };
   },
   mounted() {
@@ -424,14 +429,14 @@ export default {
     },
     allPosts() {
       axios
-        .get(`/api/post/user/${this.id}`, {
+        .get(`/api/post/user/${this.user}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         })
         .then((res) => {
           this.posts = res.data;
-          console.log(this.posts);
+          console.log(this.id_user);
           if (this.posts.posts.length == 0) {
             this.err_msg = "Вы пока не сделали ни одного поста";
             this.load = false;
@@ -469,7 +474,7 @@ export default {
     nextPosts() {
       axios
         .get(
-          `/api/post/user/${this.id}?page=${
+          `/api/post/user/${this.user}?page=${
             this.posts.pagination.current_page + 1
           }`,
           {
