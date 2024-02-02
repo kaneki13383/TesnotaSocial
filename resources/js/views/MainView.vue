@@ -1,29 +1,54 @@
 <template>
-  <div class="register container">
-    <form action="">
-      <div>
-        <label for="">Имя</label>
-        <input type="text" v-model="name" placeholder="Введите имя">
-      </div>
-      <div>
-        <label for="">Фамилия</label>
-        <input type="text" v-model="surname" placeholder="Введите фамилию">
-      </div>
-      <div>
-        <label for="">Почта</label>
-        <input type="email" v-model="email" placeholder="Введите почту">
-      </div>
-      <div>
-        <label for="">Пароль</label>
-        <input type="password" v-model="password" placeholder="Придумайте пароль">
-      </div>
-      <div>
-        <label for="">Повторите пароль</label>
-        <input type="password" v-model="password_repeat" placeholder="Повторите пароль">
-      </div>
-      <button @click.prevent="Register()">Зарегистрироваться</button>
-    </form>
-  </div>
+  <Transition>
+    <div class="register container" v-if="register == true">
+      <form action="">
+        <h1>Регистрация</h1>
+        <div>
+          <label for="">Имя</label>
+          <input type="text" v-model="name" placeholder="Введите имя">
+        </div>
+        <div>
+          <label for="">Фамилия</label>
+          <input type="text" v-model="surname" placeholder="Введите фамилию">
+        </div>
+        <div>
+          <label for="">Почта</label>
+          <input type="email" v-model="email" placeholder="Введите почту">
+        </div>
+        <div>
+          <label for="">Пароль</label>
+          <input type="password" v-model="password" placeholder="Придумайте пароль">
+        </div>
+        <div>
+          <label for="">Повторите пароль</label>
+          <input type="password" v-model="password_repeat" placeholder="Повторите пароль">
+        </div>
+        <div>
+          <button @click.prevent="Register()">Зарегистрироваться</button>
+          <p>Уже есть аккаунт? <a @click="register = false">Войдите</a></p>
+        </div>      
+      </form>
+    </div>
+  </Transition>
+  <Transition>
+    <div class="register container" v-if="register == false">
+      <form action="">
+        <h1>Вход</h1>
+        <div>
+          <label for="">Почта</label>
+          <input type="email" v-model="email" placeholder="Введите почту">
+        </div>
+        <div>
+          <label for="">Пароль</label>
+          <input type="password" v-model="password" placeholder="Придумайте пароль">
+        </div>
+        <div>
+          <button @click.prevent="Login()">Войти</button>
+          <p>Нет аккаунта? <a @click="register = true">Зарегистрироваться</a></p>
+        </div>      
+      </form>
+    </div>
+  </Transition>
 </template>
 
 <script>
@@ -35,6 +60,7 @@ export default {
       email: "",
       password: "",
       password_repeat: "",
+      register: true
     };
   },
   updated() {
@@ -75,6 +101,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
   .register{
     background-color: #272727;
     margin-top: 50px;
@@ -99,6 +134,11 @@ export default {
           padding-bottom: 10px;
         }
       }
+      div:last-child{
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+      }
       button{
         cursor: pointer;
         background: transparent;
@@ -108,5 +148,10 @@ export default {
         padding: 10px 0px;
       }
     }
+  }
+  a{
+    cursor: pointer;
+    border-bottom: 1px solid #af3131;
+    padding-bottom: 2px;
   }
 </style>
