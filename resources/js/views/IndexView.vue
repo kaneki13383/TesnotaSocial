@@ -1,7 +1,7 @@
 <template>
   <HeaderComponent />
   <div class="container all_menu">
-    <div class="block menu">
+    <div class="block menu" v-if="this.$route.path != '/'">
       <ul>
         <li>
           <svg
@@ -112,7 +112,7 @@
     <div class="create_post">
       <router-view></router-view>
     </div>
-    <div class="block weather">Потом сделаю</div>
+    <div class="block weather" v-if="this.$route.path != '/'">Потом сделаю</div>
   </div>
 </template>
 
@@ -127,30 +127,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.preview_photo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  #preview img {
-    max-width: 400px;
-    max-height: 300px;
-  }
-  .remove_photo {
-    cursor: pointer;
-    color: #af3131;
-    transition: 0.5s;
-    position: absolute;
-    padding-left: 4px;
-    padding-bottom: 2px;
-    padding-right: 4px;
-    font-size: 20px;
-    background: rgba(0, 0, 0, 0.6);
-  }
-  .remove_photo:hover {
-    color: red;
-  }
-}
-
 .all_menu {
   display: flex;
   flex-direction: row;
@@ -193,7 +169,6 @@ export default {
   .create_post {
     width: 60%;
     height: auto;
-    height: 40px;
   }
   .weather {
     width: 20%;
