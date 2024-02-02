@@ -40,7 +40,7 @@
         </div>
         <div>
           <label for="">Пароль</label>
-          <input type="password" v-model="password" placeholder="Придумайте пароль">
+          <input type="password" v-model="password" placeholder="Введите пароль">
         </div>
         <div>
           <button @click.prevent="Login()">Войти</button>
@@ -103,7 +103,7 @@ export default {
 <style lang="scss" scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.5s ease;
+  transition: 0.5s;
 }
 
 .v-enter-from,
