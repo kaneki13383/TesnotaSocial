@@ -840,4 +840,9 @@ export default {
   justify-content: center;
   margin-top: 50px;
 }
+@media screen and (max-width: 455px) {
+  .post{
+    padding: 15px;
+  }
+}
 </style>

@@ -272,4 +272,16 @@ export default {
     }
   }
 }
+
+@media screen and (max-width: 1630px) {
+  .info div{
+      img{
+      width: 200px;
+      height: 200px;
+    }
+    p{
+      font-size: 20px;
+    }
+  } 
+}
 </style>

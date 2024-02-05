@@ -167,4 +167,17 @@ form {
   padding: 10px 25px;
   border-radius: 10px;
 }
+
+@media screen and (max-width: 1054px) {
+  .preview_photo div img{
+    max-width: 400px;
+  }
+}
+
+
+@media screen and (max-width: 455px) {
+  .preview_photo div img{
+    max-width: 200px;
+  }
+}
 </style>
