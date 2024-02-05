@@ -21,7 +21,9 @@
 
   <div class="background" v-if="modal == true">
     <div class="container block modal">
-      <a @click="modal = false">✖</a>
+      <div>
+        <a @click="modal = false">✖</a>
+      </div>      
       <form action="">
         <h1>Редактировать личные данные</h1>
         <div>
@@ -152,6 +154,7 @@ export default {
 .background {
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100vh;
   background: rgba(0, 0, 0, 0.6);
@@ -161,8 +164,11 @@ export default {
   .modal {
     position: relative;
     z-index: 4;
+    width: fit-content;
     a {
-      position: absolute;
+      position: relative;
+      bottom: 18px;
+      right: 10px;
       color: #af3131;
       transition: 0.5s;
       font-size: 25px;

@@ -11,7 +11,7 @@
   </div>
 
   <div class="container">
-    <CheckUserPostsComponent :user="user.id" />
+    <CheckUserPostsComponent />
   </div>
 </template>
 
