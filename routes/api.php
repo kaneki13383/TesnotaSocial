@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Autorization;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
@@ -45,4 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Комментарии к постам
     Route::post('/comment/create', [CommentController::class, 'createCommnet']);
     Route::post('/comment/all', [CommentController::class, 'allPostComments']);
+
+    // Все что связанно с друзьями
+    Route::get('/maby/frineds', [FriendController::class, 'all_users']);
 });

@@ -99,7 +99,20 @@
     <div class="create_post">
       <router-view></router-view>
     </div>
-    <div class="block weather">Потом сделаю</div>
+    <div v-if="this.$route.path == '/news'" class="block weather">Потом сделаю</div>
+    <div v-if="this.$route.path == '/friends'" class="block friends">
+      <div v-for="frined in maby_friends" :key="frined">
+        <router-link v-if="this.$store.state.user.id != post.id_user.id" :to="{ path: '/user/' + post.id_user.id }">
+          <img :src="frined.avatar" alt="">
+          <p>{{ frined.name }}</p>
+        </router-link>
+        <router-link v-if="this.$store.state.user.id == post.id_user.id" :to="{ path: '/profile' }">
+          <img :src="frined.avatar" alt="">
+          <p>{{ frined.name }}</p>
+        </router-link>
+
+      </div>
+    </div>
   </div>
   <div class="create_post df-logo container" v-if="this.$route.path == '/'">
     <router-view></router-view>
@@ -280,7 +293,26 @@ import HeaderComponent from "../components/HeaderComponent.vue";
 export default {
   components: { HeaderComponent },
   data() {
-    return {};
+    return {
+      maby_friends: []
+    };
+  },
+  watch: {
+    $route() {
+      this.get_maby_frineds();
+    },
+  },
+  methods: {
+    get_maby_frineds() {
+      axios.get('/api/maby/frineds', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
+        .then(res => {
+          this.maby_friends = res.data;
+        })
+    }
   },
 };
 </script>
@@ -357,6 +389,24 @@ svg {
   .weather {
     width: 20%;
     height: 210px;
+  }
+
+  .friends {
+    width: 20%;
+    height: max-content;
+
+    div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+    }
   }
 }
 
