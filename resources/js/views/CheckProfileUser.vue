@@ -8,6 +8,12 @@
       </div>
       <p>{{ user.name }} {{ user.surname }}</p>
     </div>
+    <button v-if="butt == 'Добавить в друзья'" class="add_friend" @click.prevent="add_friend()">Добавить в друзья
+      +</button>
+    <button v-if="butt == 'Запрос в друзья отправлен'" class="add_friend">Запрос в друзья отправлен</button>
+    <button v-if="butt == 'Хочет добавить вас в друзья'" class="add_friend" @click.prevent="accept_frined()">Хочет
+      добавить вас в друзья</button>
+    <button v-if="butt == 'У вас в друзьях'" class="add_friend">У вас в друзьях</button>
   </div>
 
   <div class="container">
@@ -23,6 +29,7 @@ export default {
       id: 0,
       user: [],
       load: true,
+      butt: 'Добавить в друзья'
     };
   },
   components: {
@@ -30,6 +37,7 @@ export default {
   },
   mounted() {
     this.getUser();
+    this.check_friend();
   },
   methods: {
     getUser() {
@@ -46,6 +54,47 @@ export default {
           this.load = false;
         });
     },
+    add_friend() {
+      axios.post(`/api/add_friend/${this.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        id_user: this.$store.state.user.id,
+      })
+        .then(res => {
+          this.check_friend()
+        })
+    },
+    check_friend() {
+      axios
+        .get("/api/me", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          this.me = res.data.content;
+          this.$store.state.user.avatar = this.me.avatar;
+          this.$store.state.user.name = this.me.name;
+          this.$store.state.user.surname = this.me.surname;
+          this.$store.state.user.email = this.me.email;
+
+          axios.get(`/api/check/friend/${this.$store.state.user.id}`)
+            .then(res => {
+              console.log(res);
+              this.butt = res.data
+            })
+
+        })
+        .catch((err) => {
+          this.$router.push("/");
+        });
+    },
+    accept_frined() {
+      axios.get(`/api/accept/friend/${this.$store.state.user.id}`)
+        .then(res => {
+          this.butt = res.data
+          this.check_friend();
+        })
+    }
   },
 };
 </script>
@@ -59,54 +108,38 @@ export default {
   background-size: 200% 100%;
   animation: 1s shine linear infinite;
 }
+
 @keyframes shine {
   to {
     background-position-x: -200%;
   }
 }
+
 .info {
-  a {
-    float: right;
-    color: #af3131;
-    transition: 0.5s;
-  }
-  a:hover {
-    color: red;
-    cursor: pointer;
-  }
   div {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    label {
-      opacity: 0;
-      background: rgba(0, 0, 0, 0.452);
-      width: 250px;
-      height: 250px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      transition: 0.5s;
-    }
-    label:hover {
-      opacity: 1;
-      cursor: pointer;
-    }
 
-    input[type="file"] {
-      display: none;
-    }
     img {
       width: 250px;
       height: 250px;
       border-radius: 50%;
     }
+
     p {
       font-size: 25px;
     }
+  }
+
+  .add_friend {
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 10px 10px;
+    border-radius: 10px
   }
 }
 </style>

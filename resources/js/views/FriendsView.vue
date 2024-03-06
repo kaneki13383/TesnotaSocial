@@ -9,7 +9,34 @@
 
 <script>
 export default {
+    data() {
+        return {
+            friends: []
+        }
+    },
+    mounted() {
+        this.my_friends()
+    },
+    methods: {
+        my_friends() {
+            axios
+                .get("/api/me", {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                })
+                .then((res) => {
+                    this.me = res.data.content;
+                    this.$store.state.user.avatar = this.me.avatar;
+                    this.$store.state.user.name = this.me.name;
+                    this.$store.state.user.surname = this.me.surname;
+                    this.$store.state.user.email = this.me.email;
 
+                    axios.get(`/api/my/friends/${this.$store.state.user.id}`)
+                        .then(res => {
+                            console.log(res);
+                        })
+                })
+        }
+    },
 }
 </script>
 

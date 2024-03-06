@@ -101,16 +101,12 @@
     </div>
     <div v-if="this.$route.path == '/news'" class="block weather">Потом сделаю</div>
     <div v-if="this.$route.path == '/friends'" class="block friends">
+      <span>Возможно знакомы</span>
       <div v-for="frined in maby_friends" :key="frined">
-        <router-link v-if="this.$store.state.user.id != post.id_user.id" :to="{ path: '/user/' + post.id_user.id }">
+        <router-link :to="{ path: '/user/' + frined.id }">
           <img :src="frined.avatar" alt="">
           <p>{{ frined.name }}</p>
         </router-link>
-        <router-link v-if="this.$store.state.user.id == post.id_user.id" :to="{ path: '/profile' }">
-          <img :src="frined.avatar" alt="">
-          <p>{{ frined.name }}</p>
-        </router-link>
-
       </div>
     </div>
   </div>
@@ -395,16 +391,25 @@ svg {
     width: 20%;
     height: max-content;
 
-    div {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 10px;
+    span {
+      text-align: center;
+    }
 
-      img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+    div {
+      margin-top: 20px;
+
+      a {
+        text-decoration: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
       }
     }
   }
