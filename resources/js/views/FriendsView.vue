@@ -29,7 +29,6 @@
                     <img :src="friend.avatar" alt="">
                     <p>{{ friend.name }} {{ friend.surname }}</p>
                 </router-link>
-                <span @click="delete_frined(friend.id)">У вас в друзьях</span>
             </div>
         </div>
     </div>

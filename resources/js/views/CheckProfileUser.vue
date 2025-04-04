@@ -1,5 +1,5 @@
 <template>
-  <div class="container block info">
+  <div class="container block info" :style="{ 'background-color': user.profile_color }">
     <div>
       <img v-if="load == true" src="../../../public/img/no_avatar.jpg" alt="" />
       <img v-if="load != true" :src="user.avatar" alt="" />

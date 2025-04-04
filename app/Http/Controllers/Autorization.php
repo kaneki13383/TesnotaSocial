@@ -65,7 +65,7 @@ class Autorization extends Controller
         ]);
         $user = User::find(Auth::guard('sanctum')->id());
         $path = Storage::disk('public')->put('avatars', $data['avatar']);
-        // dd($user->id);
+        
         User::where('id', $user->id)->update([
             'avatar' => '/storage/' . $path
         ]);
@@ -81,6 +81,7 @@ class Autorization extends Controller
             'name' => $request->input('name'),
             'surname' => $request->input('surname'),
             'email' => $request->input('email'),
+            'profile_color' => $request->input('profile_color')
         ]);
         return response()->json([
             'message' => 'Данные успешно изменены'

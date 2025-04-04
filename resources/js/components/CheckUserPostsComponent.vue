@@ -433,7 +433,6 @@ export default {
         })
         .then((res) => {
           this.posts = res.data;
-          console.log(this.id_user);
           if (this.posts.posts.length == 0) {
             this.err_msg = "Нет постов";
             this.load = false;

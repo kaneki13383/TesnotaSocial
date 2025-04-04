@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RepostController;
 use App\Models\Friend;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/post/delete/{id}', [PostController::class, 'deletePost']);
     Route::get('/post/my', [PostController::class, 'getMyPosts'])->middleware('throttle:50000,1');
     Route::get('/post/user/{id}', [PostController::class, 'getUserPosts'])->middleware('throttle:50000,1');
+    Route::post('/repost', [RepostController::class, 'add_repost']);
+    Route::get('/all/repost', [RepostController::class, 'all_repost']);
+    Route::delete('/delete/repost/{id}', [RepostController::class, 'delete_repost']);
 
     // Лайки постов
     Route::post('/likes/create', [LikeController::class, 'store']);
@@ -49,10 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comment/all', [CommentController::class, 'allPostComments']);
 
     // Все что связанно с друзьями
-    Route::get('/maby/frineds', [FriendController::class, 'all_users']);
-    Route::get('/my/friend', [FriendController::class, 'my_friends']);
+    Route::get('/maby/frineds', [FriendController::class, 'all_users'])->middleware('throttle:500000,1');
+    Route::get('/my/friend', [FriendController::class, 'my_friends'])->middleware('throttle:500000,1');
     Route::delete('/delete/friend/{id}', [FriendController::class, 'delete_friend']);
-    Route::get('/check/friend/{id}', [FriendController::class, 'check_status_frined']);
+    Route::get('/check/friend/{id}', [FriendController::class, 'check_status_frined'])->middleware('throttle:500000,1');
 });
 
 Route::post('/add_friend/{id}', [FriendController::class, 'add_friend']);

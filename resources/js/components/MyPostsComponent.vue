@@ -1,6 +1,48 @@
 <template>
   <!-- Сами посты v-for="(post, index) in posts" :key="post"-->
   <div v-for="(post, index) in posts.posts" :key="post" class="block post">
+    <div class="header_post" v-if="post.repost != null">
+      <div>
+        <router-link v-if="this.$store.state.user.id != post.repost[0].id"
+          :to="{ path: '/user/' + post.repost[0].id }"><img :src="post.repost[0].avatar" alt="" /></router-link>
+        <router-link v-if="this.$store.state.user.id == post.repost[0].id" :to="{ path: '/profile' }"><img
+            :src="post.repost[0].avatar" alt="" /></router-link>
+        <div>
+          <router-link v-if="this.$store.state.user.id != post.repost[0].id"
+            :to="{ path: '/user/' + post.repost[0].id }">
+            <p>
+              {{ post.repost[0].name }} {{ post.repost[0].surname }}
+            </p>
+          </router-link>
+          <router-link v-if="this.$store.state.user.id == post.repost[0].id" :to="{ path: '/profile' }">
+            <p>
+              {{ post.repost[0].name }} {{ post.repost[0].surname }}
+            </p>
+          </router-link>
+          <p>{{ getHumanDate(post.repost_created_at) }}</p>
+        </div>
+      </div>
+      <div v-if="this.$store.state.user.id == post.repost[0].id" class="actions"
+        @mouseover="Actions(post.action, index)" @mouseleave="CloseActions(post.action, index)">
+        <div>
+          <svg fill="#606060" width="30px" height="30px" viewBox="0 0 32 32" enable-background="new 0 0 32 32"
+            id="Glyph" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" stroke="#606060">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M16,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S17.654,13,16,13z" id="XMLID_287_"></path>
+              <path d="M6,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S7.654,13,6,13z" id="XMLID_289_"></path>
+              <path d="M26,13c-1.654,0-3,1.346-3,3s1.346,3,3,3s3-1.346,3-3S27.654,13,26,13z" id="XMLID_291_"></path>
+            </g>
+          </svg>
+        </div>
+
+        <div v-if="post.action == true" class="dropdown-content">
+          <p @click="DeleteRepost(post.id_repost, index)">Удалить</p>
+        </div>
+      </div>
+    </div>
     <div class="header_post">
       <div>
         <router-link v-if="this.$store.state.user.id != post.id_user.id" :to="{ path: '/user/' + post.id_user.id }"><img
@@ -229,6 +271,7 @@ import moment from "moment/min/moment-with-locales";
 import "vue3-carousel/dist/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
 import CarouselFixComponentVue from "./CarouselFixComponent.vue";
+import axios from "axios";
 
 moment.locale("ru");
 export default {
@@ -252,7 +295,7 @@ export default {
     if (this.err_msg == "") {
       this.ScrollCheck();
     }
-    
+
   },
   components: {
     Carousel,
@@ -303,39 +346,58 @@ export default {
         })
         .then((res) => {
           this.posts = res.data;
-          console.log(this.posts);
-          if (this.posts.posts.length == 0) {
-            this.err_msg = "Вы пока не сделали ни одного поста";
-            this.load = false;
-          } else {
-            this.$store.state.page = this.posts.pagination.current_page;
-
-            this.posts.posts.forEach((post) => {
-              post.countLikes = post.likes.length;
-              post.active_like = false;
-              post.countComments = post.comments.length;
-              post.action = false;
-            });
-            for (let index = 0; index < this.posts.posts.length; index++) {
-              axios
-                .post(
-                  "/api/likes/check",
-                  {
-                    id_post: this.posts.posts[index].id,
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                  }
-                )
-                .then((res) => {
-                  this.posts.posts[index].active_like = res.data.check;
-                  this.load = false;
-                })
-                .catch((err) => { });
+          axios.get('/api/all/repost', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             }
-          }
+          })
+            .then(res => {
+              let rep_arr = res.data.data;
+              for (let index = 0; index < rep_arr.length; index++) {
+                this.posts.posts.unshift(rep_arr[index].id_post[index])
+              }
+              console.log(this.posts.posts);
+              if (this.posts.posts.length == 0) {
+                this.err_msg = "Вы пока не сделали ни одного поста";
+                this.load = false;
+              } else {
+                this.$store.state.page = this.posts.pagination.current_page;
+
+                this.posts.posts.forEach((post, index) => {
+                  post.countLikes = post.likes.length;
+                  post.active_like = false;
+                  post.countComments = post.comments.length;
+                  post.action = false;
+
+                  if (post.id_user.id != this.$store.state.user.id) {
+                    post.repost = rep_arr[index].id_user
+                    post.repost_created_at = rep_arr[index].created_at
+                    post.id_repost = rep_arr[index].id
+                  } else {
+                    post.repost = null
+                  }
+                });
+                for (let index = 0; index < this.posts.posts.length; index++) {
+                  axios
+                    .post(
+                      "/api/likes/check",
+                      {
+                        id_post: this.posts.posts[index].id,
+                      },
+                      {
+                        headers: {
+                          Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                      }
+                    )
+                    .then((res) => {
+                      this.posts.posts[index].active_like = res.data.check;
+                      this.load = false;
+                    })
+                    .catch((err) => { });
+                }
+              }
+            })
         });
     },
     nextPosts() {
@@ -474,6 +536,16 @@ export default {
           this.posts.posts.splice(index, 1);
         });
     },
+    DeleteRepost(id_repost, index) {
+      axios.delete(`/api/delete/repost/${id_repost}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
+        .then(res => {
+          this.posts.posts.splice(index, 1);
+        })
+    }
   },
 };
 </script>
@@ -642,6 +714,10 @@ export default {
 }
 
 .post {
+  .header_post:nth-child(2){
+    margin-left: 20px;
+    margin-top: 10px;
+  }
   .header_post {
     display: flex;
     flex-direction: row;
