@@ -82,6 +82,7 @@ export default {
           .then((res) => {
             localStorage.setItem("token", res.data["content"]);
             this.$router.push("/profile");
+            
           });
       }
     },

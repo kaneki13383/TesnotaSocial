@@ -38,22 +38,21 @@ class FriendController extends Controller
 
     function check_status_frined($id_user)
     {
-        $fisrt = Friend::where('id_user', $id_user)->orWhere('id_friend', $id_user)->first();
-        $second = Friend::where('id_user', $id_user)->get();
-
-        if (empty($fisrt)) {
-            return 'Добавить в друзья';
-        } else {
-            if ($fisrt['status'] == 0) {
-                if (count($second) == 0) {
-                    return 'Хочет добавить вас в друзья';
-                } else {
-                    return 'Запрос в друзья отправлен';
-                }
-            }
-            if ($fisrt['status'] == 1) {
+        $id_user = (int)$id_user;
+        $fisrt_check = Friend::where('id_user', Auth::guard('sanctum')->id())->where('id_friend', $id_user)->first();
+        if (empty($fisrt_check)) {
+            $second_check = Friend::where('id_user', $id_user)->where('id_friend', Auth::guard('sanctum')->id())->first();
+            if (empty($second_check)) {
+                return 'Добавить в друзья';
+            } else if ($second_check['status'] == 0) {
+                return 'Хочет добавить вас в друзья';
+            } else if ($second_check['status'] == 1) {
                 return 'У вас в друзьях';
             }
+        } else if ($fisrt_check['status'] == 0) {
+            return 'Запрос в друзья отправлен';
+        } else if ($fisrt_check['status'] == 1) {
+            return 'У вас в друзьях';
         }
     }
 
@@ -64,15 +63,14 @@ class FriendController extends Controller
         ]);
     }
 
-    function my_friends($id_user)
+    function my_friends()
     {
-        $sql_1 = FrinedResource::collection(Friend::where('id_user', $id_user)->get('id_friend'));
+        return FrinedResource::collection(Friend::where('id_user', Auth::user()->id)->orWhere('id_friend', Auth::user()->id)->where('status', 1)->get());
+    }
 
-
-        $sql_2 = FrinedResource::collection(Friend::where('id_friend', $id_user)->get('id_user'));
-
-        $res = array_map('array_merge', $sql_1, $sql_2);
-
-        return $res;
+    function delete_friend($id)
+    {
+        Friend::where('id', $id)->delete();
+        return 'Удален';
     }
 }

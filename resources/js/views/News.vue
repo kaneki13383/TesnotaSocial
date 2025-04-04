@@ -1,48 +1,38 @@
 <template>
   <form id="hide" action="">
-    <input
-      type="text"
-      v-model="text"
-      placeholder="Расскажите, что у вас нового!"
-      @click.prevent="OpenCreatePost()"
-    />
-    <div
-      v-if="create_post == true"
-      style="display: flex; flex-direction: column; gap: 10px"
-    >
-      <input
-        multiple
-        type="file"
-        id="file"
-        ref="file"
-        accept=".png,.webp,.jpg,.jpeg"
-        required
-        v-on:change="handleFileUpload()"
-      />
-      <button @click="addFiles()">Выбрать фото</button>
-      <button @click.prevent="createPost()">Опубликовать</button>
+    <input type="text" v-model="text" placeholder="Расскажите, что у вас нового!" @click.prevent="OpenCreatePost()" />
+    <transition name="slide-fade">
+      <div v-if="create_post == true" style="display: flex; flex-direction: column; gap: 10px">
+        <input multiple type="file" id="file" ref="file" accept=".png,.webp,.jpg,.jpeg" required
+          v-on:change="handleFileUpload()" />
+        <button @click="addFiles()">Выбрать фото</button>
+        <button @click.prevent="createPost()">Опубликовать</button>
 
-      <div class="preview_photo">
-        <div v-for="(photo, index) in url" :key="photo" id="preview">
-          <p
-            @click="url.splice(index, 1), removeFile(index)"
-            class="remove_photo"
-          >
-            ✖
-          </p>
-          <img v-if="url" :src="photo" />
+        <div class="preview_photo">
+          <div v-for="(photo, index) in url" :key="photo" id="preview">
+            <p @click="url.splice(index, 1), removeFile(index)" id="hide" class="remove_photo">
+              ✖
+            </p>
+            <img v-if="url" :src="photo" />
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
 
-    <div v-if="message != ''" @click="message = ''" class="message">
-      <p>{{ message }}</p>
-    </div>
-    <div v-if="error != ''" @click="error = ''" class="error">
-      <p>{{ error }}</p>
-    </div>
+    <transition name="slide-fade">
+      <div v-if="message != ''" @click="message = ''" class="message">
+        <p>{{ message }}</p>
+      </div>
+    </transition>
+
+    <transition name='slide-fade'>
+      <div v-if="error != ''" @click="error = ''" class="error">
+        <p>{{ error }}</p>
+      </div>
+    </transition>
+
   </form>
-  <PostsComponent />
+  <PostsComponent ref="PostsComponent" />
 </template>
 
 <script>
@@ -111,14 +101,20 @@ export default {
         .then((res) => {
           this.text = "";
           this.message = res.data.message;
+          setTimeout((ers) => {
+            this.message = ''
+          }, 3000)
           this.create_post = false;
           this.files = [];
           this.url = [];
-          this.allPosts();
+          this.$refs.PostsComponent.allPosts();
           window.addEventListener("scroll", this.ScrollCheck);
         })
         .catch((err) => {
           this.error = err.message;
+          setTimeout((ers) => {
+            this.message = ''
+          }, 3000)
         });
     },
   },
@@ -126,12 +122,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(50px);
+  opacity: 0;
+}
+
 form {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+
   input {
+    outline: none;
     width: 100%;
     background: transparent;
     border: 2px solid #af3131;
@@ -140,11 +156,13 @@ form {
     padding-left: 5px;
     margin-top: 20px;
   }
+
   input[type="file"] {
     width: auto;
     position: absolute;
     top: -500px;
   }
+
   div {
     button {
       cursor: pointer;
@@ -155,12 +173,14 @@ form {
     }
   }
 }
+
 .message {
   cursor: pointer;
   background: #155f0b;
   padding: 10px 25px;
   border-radius: 10px;
 }
+
 .error {
   cursor: pointer;
   background: #5f0b0b;
@@ -168,15 +188,25 @@ form {
   border-radius: 10px;
 }
 
+.preview_photo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  div img {
+    max-width: 400px;
+  }
+}
+
 @media screen and (max-width: 1054px) {
-  .preview_photo div img{
+  .preview_photo div img {
     max-width: 400px;
   }
 }
 
 
 @media screen and (max-width: 455px) {
-  .preview_photo div img{
+  .preview_photo div img {
     max-width: 200px;
   }
 }

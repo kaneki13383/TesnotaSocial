@@ -77,9 +77,10 @@ export default {
           this.$store.state.user.surname = this.me.surname;
           this.$store.state.user.email = this.me.email;
 
-          axios.get(`/api/check/friend/${this.$store.state.user.id}`)
+          axios.get(`/api/check/friend/${this.user.id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          })
             .then(res => {
-              console.log(res);
               this.butt = res.data
             })
 

@@ -16,6 +16,7 @@ class FrinedResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'id_friend' => User::find($this->id_friend),
             'id_user' => User::find($this->id_user)
         ];

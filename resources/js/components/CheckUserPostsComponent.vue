@@ -435,7 +435,7 @@ export default {
           this.posts = res.data;
           console.log(this.id_user);
           if (this.posts.posts.length == 0) {
-            this.err_msg = "Вы пока не сделали ни одного поста";
+            this.err_msg = "Нет постов";
             this.load = false;
           } else {
             this.$store.state.page = this.posts.pagination.current_page;

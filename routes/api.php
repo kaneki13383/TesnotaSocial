@@ -50,9 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Все что связанно с друзьями
     Route::get('/maby/frineds', [FriendController::class, 'all_users']);
+    Route::get('/my/friend', [FriendController::class, 'my_friends']);
+    Route::delete('/delete/friend/{id}', [FriendController::class, 'delete_friend']);
+    Route::get('/check/friend/{id}', [FriendController::class, 'check_status_frined']);
 });
 
 Route::post('/add_friend/{id}', [FriendController::class, 'add_friend']);
-Route::get('/check/friend/{id}', [FriendController::class, 'check_status_frined']);
 Route::get('/accept/friend/{id}', [FriendController::class, 'accept_frined']);
-Route::get('/my/friends/{id}', [FriendController::class, 'my_friends']);
