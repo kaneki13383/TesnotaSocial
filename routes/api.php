@@ -40,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/post/my', [PostController::class, 'getMyPosts'])->middleware('throttle:50000,1');
     Route::get('/post/user/{id}', [PostController::class, 'getUserPosts'])->middleware('throttle:50000,1');
     Route::post('/repost', [RepostController::class, 'add_repost']);
-    Route::get('/all/repost', [RepostController::class, 'all_repost']);
+    Route::get('/all/repost/{id}', [RepostController::class, 'all_repost']);
     Route::delete('/delete/repost/{id}', [RepostController::class, 'delete_repost']);
 
     // Лайки постов

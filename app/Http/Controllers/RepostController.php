@@ -25,7 +25,7 @@ class RepostController extends Controller
         return 'Репост удален';
     }
 
-    function all_repost(){
-        return RepostResource::collection(Repost::where('id_user', Auth::guard('sanctum')->id())->get());
+    function all_repost($id_user){
+        return RepostResource::collection(Repost::where('id_user', $id_user)->get());
     }
 }

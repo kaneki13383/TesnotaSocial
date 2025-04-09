@@ -346,7 +346,7 @@ export default {
         })
         .then((res) => {
           this.posts = res.data;
-          axios.get('/api/all/repost', {
+          axios.get(`/api/all/repost/${this.$store.state.user.id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             }
